@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.ProjectTaskDAO">
+    <update id="updateProcessTaskAsActived">
+        UPDATE maoding_web_project_task
+        SET complete_date = NULL
+        WHERE id = #{projectTaskId,jdbcType=VARCHAR}
+    </update>
+</mapper>

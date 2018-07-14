@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.im.module.imAccount.dao.ImAccountDAO">
+    <update id="updateWithOptimisticLock" parameterType="com.maoding.im.module.imAccount.model.ImAccountDO">
+        UPDATE maoding_im_account
+        <trim suffixOverrides=",">
+            <set>
+                up_version=up_version+1,
+                <if test="accountStatus != null">account_status =#{accountStatus},</if>
+                <if test="lastQueueNo != null">last_queue_no =#{lastQueueNo},</if>
+                <if test="deleted != null">deleted =#{deleted},</if>
+                <if test="updateDate != null">update_date =#{updateDate},</if>
+            </set>
+            WHERE id=#{id} AND up_version=#{upVersion}
+        </trim>
+    </update>
+    
+    <select id="selectAllAccountSynIm" resultType="com.maoding.im.module.imAccount.dto.ImAccountSyncDTO">
+        select a.id as account_id,a.user_name as account_name,b.id as im_account_id,b.account_status,b.up_version
+        from maoding_web_account a
+        LEFT JOIN maoding_im_account b on a.id = b.id
+        where b.id is null
+    </select>
+
+</mapper>

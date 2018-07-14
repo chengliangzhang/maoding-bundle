@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.im.module.imGroup.dao.ImGroupDAO">
+    <update id="updateWithOptimisticLock" parameterType="com.maoding.im.module.imGroup.model.ImGroupDO">
+        UPDATE maoding_im_group
+        <trim suffixOverrides=",">
+            <set>
+                up_version=up_version+1,
+                <if test="groupNo != null">group_no =#{groupNo},</if>
+                <if test="groupName != null">group_name =#{groupName},</if>
+                <if test="groupOwner != null">group_owner =#{groupOwner},</if>
+                <if test="groupImg != null">group_img =#{groupImg},</if>
+                <if test="groupStatus != null">group_status =#{groupStatus},</if>
+                <if test="topHold != null">top_hold =#{topHold},</if>
+                <if test="lastQueueNo != null">last_queue_no =#{lastQueueNo},</if>
+                <if test="deleted != null">deleted =#{deleted},</if>
+                <if test="updateDate != null">update_date =#{updateDate},</if>
+            </set>
+            WHERE id=#{id} AND up_version=#{upVersion}
+        </trim>
+    </update>
+
+    <select id="selectAllCompany" resultType="com.maoding.im.module.imGroup.dto.ImGroupDTO">
+        select a.id as org_id,a.company_name as group_name,b.user_id as group_owner,c.id as group_id
+        from maoding_web_company a
+        INNER JOIN maoding_web_team_operater b on a.id = b.company_id
+        LEFT JOIN maoding_im_group c on a.id = c.id
+        where a.status = 0 and c.id is null
+        group by a.id
+    </select>
+
+    <select id="selectGroupMemberByOrgId" resultType="com.maoding.im.module.imGroup.dto.ImGroupMemberDTO" parameterType="java.lang.String">
+        select a.id as company_user_id,a.user_id as account_id
+        from maoding_web_company_user a
+        where a.audit_status = 1 and a.company_id = #{orgId}
+    </select>
+
+
+    <select id="getCompanyUserId" parameterType="com.maoding.im.module.imGroup.dto.ImGroupMemberDTO" resultType="java.lang.String">
+        select a.id
+        from maoding_web_company_user a
+        where a.audit_status = 1 and a.company_id = #{orgId} and a.user_id = #{accountId}
+    </select>
+</mapper>

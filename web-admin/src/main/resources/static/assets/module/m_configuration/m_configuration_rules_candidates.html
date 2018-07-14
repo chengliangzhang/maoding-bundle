@@ -1,0 +1,26 @@
+{{if candidatesList!=null && candidatesList.length>0}}
+<table class="table table-bordered table-responsive">
+    <tbody>
+        {{each candidatesList as c}}
+        <tr>
+            <td width="20%">
+                <label class="i-checks fw-normal m-b-none">
+                    <input name="candidates" type="checkbox" data-id="{{c.id}}" data-value="{{c.value}}" data-code="{{c.code}}"`/>
+                    <span class="i-checks-span">{{c.name}}</span>
+                </label>
+            </td>
+            <td width="80%">
+                {{if c.valueList!=null && c.valueList.length>0}}
+                    {{each c.valueList as v }}
+                        <label class="i-checks fw-normal m-b-none">
+                            <input name="candidatesItem" type="checkbox" data-id="{{v.id}}" data-code="{{v.code}}"/>
+                            <span class="i-checks-span">{{v.valueName}}</span>
+                        </label>
+                    {{/each}}
+                {{/if}}
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{/if}}

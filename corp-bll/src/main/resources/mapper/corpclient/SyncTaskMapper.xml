@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpclient.dao.SyncTaskDAO">
+
+    <select id="listUnfinishedTask" parameterType="java.lang.String"
+            resultType="com.maoding.corp.module.corpclient.model.SyncTaskDO">
+        SELECT *
+        FROM maoding_corp_sync_task
+        <where>
+            <![CDATA[  corp_endpoint = #{endpoint} AND task_status < 2  ]]>
+        </where>
+    </select>
+
+    <select id="listWaitRuningTask" parameterType="java.lang.String"
+            resultType="com.maoding.corp.module.corpclient.model.SyncTaskDO">
+        SELECT *
+        FROM maoding_corp_sync_task
+        <where>
+            <![CDATA[  corp_endpoint = #{endpoint} AND task_status = 0  ]]>
+        </where>
+    </select>
+
+    <select id="listRuningTask" parameterType="java.lang.String"
+            resultType="com.maoding.corp.module.corpclient.model.SyncTaskDO">
+        SELECT *
+        FROM maoding_corp_sync_task
+        <where>
+            <![CDATA[  corp_endpoint = #{endpoint} AND task_status = 1  ]]>
+        </where>
+    </select>
+
+
+    <update id="updateWithOptimisticLock" parameterType="com.maoding.corp.module.corpclient.model.SyncTaskDO">
+        UPDATE maoding_corp_sync_task
+        <trim suffixOverrides=",">
+            <set>
+                up_version=up_version+1,
+                <if test="lastEntry != null">last_entry =#{lastEntry},</if>
+                <if test="syncStatus != null">sync_status =#{syncStatus},</if>
+                <if test="taskStatus != null">task_status =#{taskStatus},</if>
+                <if test="retryTimes != null">retry_times =#{retryTimes},</if>
+                <if test="updateDate != null">update_date =#{updateDate},</if>
+            </set>
+            WHERE id=#{id} AND up_version=#{upVersion}
+        </trim>
+    </update>
+
+    <update id="updateRunngingAsWaitRunningStatus">
+        UPDATE maoding_corp_sync_task
+        SET task_status = 0, sync_status = 0
+        WHERE task_status = 1;
+    </update>
+</mapper>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common::header_login(~{::title},~{::link})">
+    <title>卯丁后台</title>
+    <link rel="stylesheet" th:href="@{/assets/css/themes/login.min.css}"/>
+</head>
+<body class="login">
+<div class="logo" style="margin:60px auto 20px;">
+   <!-- <a href="javascript:void(0);"><img th:src="@{/assets/img/logo_white.png}" alt="logo" class="logo-default"/></a>-->
+</div>
+<div class="content" style="padding-bottom: 35px;">
+    <form class="login-form">
+        <h3 class="form-title">后台登陆</h3>
+        <div class="form-group">
+            <label class="control-label visible-ie8 visible-ie9">账号</label>
+            <div class="input-icon">
+                <i class="fa fa-user"></i>
+                <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="请输入手机号"
+                       name="account" id="account"/></div>
+        </div>
+        <div class="form-group">
+            <label class="control-label visible-ie8 visible-ie9">密码</label>
+            <div class="input-icon">
+                <i class="fa fa-lock"></i>
+                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="请输入密码"
+                       name="password" id="password"/></div>
+        </div>
+        <div class="form-group">
+            <button type="button" id="btnLogin" class="btn green pull-right">登陆</button>
+        </div>
+        <div class="clearfix"></div>
+    </form>
+</div>
+<th:block th:replace="common::footer_login(~{::script})">
+    <script type="text/javascript" th:src="@{/assets/lib/backstretch/jquery.backstretch.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/viewJs/login.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        $(function () {
+            main.init(login);
+        });
+    </script>
+</th:block>
+</body>
+</html>

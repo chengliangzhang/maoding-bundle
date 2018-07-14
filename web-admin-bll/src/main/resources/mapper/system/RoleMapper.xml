@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.system.dao.RoleDAO">
+
+    <select id="getRoleByType" parameterType="java.lang.String" resultType="com.maoding.admin.module.system.dto.RoleDTO">
+        select *
+        from maoding_role a
+        where 1=1
+        and a.role_type = #{roleType}
+        order by a.seq
+    </select>
+
+    <select id="getRoleByCode" parameterType="java.lang.String" resultType="com.maoding.admin.module.system.dto.RoleDTO">
+        select *
+        from maoding_role a
+        where 1=1
+        and a.role_code = #{roleCode}
+    </select>
+
+
+    <select id="getRoleByType2" parameterType="java.lang.String" resultType="com.maoding.admin.module.system.dto.RoleDTO">
+        select a.*,if(b.id is null,0,1) as isSelect
+        from maoding_role a
+        LEFT JOIN maoding_rule_detail b on a.id = b.rule_value and b.rule_id =#{ruleId}
+        where 1=1
+        and a.role_type = #{roleType}
+    </select>
+
+</mapper>

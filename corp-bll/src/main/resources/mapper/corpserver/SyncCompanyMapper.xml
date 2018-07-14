@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.SyncCompanyDAO">
+    <select id="selectSyncCompany" resultType="com.maoding.corp.module.corpserver.dto.SyncCompanyDTO_Select">
+        SELECT s.*,
+        c.company_name,
+        d.total_size,d.corp_size,d.docmgr_size,d.other_size,d.free_size,d.corp_on_cloud
+        FROM maoding_corp_sync_company s
+        LEFT JOIN maoding_web_company c ON c.id = s.company_id
+        LEFT JOIN maoding_corp_company_disk d ON d.id = s.company_id
+        <where>
+            <if test="corpEndpoint !=null">
+                AND s.corp_endpoint= #{corpEndpoint}
+            </if>
+        </where>
+        ORDER BY s.corp_endpoint,s.create_date
+    </select>
+</mapper>

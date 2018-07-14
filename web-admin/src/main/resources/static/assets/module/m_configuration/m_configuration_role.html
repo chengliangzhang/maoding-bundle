@@ -1,0 +1,9 @@
+<div class="list-group">
+    {{if roleList!=null && roleList.length>0}}
+    {{each roleList as r }}
+        <a href="javascript:void(0);" class="list-group-item" data-action="getViewsByRole" data-code="{{r.roleCode}}" data-id="{{r.id}}" data-type="{{r.roleType}}">
+            {{r.name}}
+        </a>
+    {{/each}}
+    {{/if}}
+</div>

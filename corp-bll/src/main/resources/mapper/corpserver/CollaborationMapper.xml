@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.CollaborationDAO">
+    <select id="listCompanyByIds" resultType="com.maoding.corp.module.corpserver.dto.CoCompanyDTO"
+            parameterType="java.util.Map">
+        select
+        c.id as companyId , c.company_name
+        from maoding_web_company c
+        where c.id in
+        <foreach collection="companyIds" item="id" index="i" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getProjectById" resultType="com.maoding.corp.module.corpserver.dto.ProjectDTO"
+            parameterType="java.lang.String">
+        SELECT
+            p.company_id,
+            p.id AS project_id,
+            p.project_name,
+            p.pstatus,
+            p.create_by,
+            p.create_date
+        FROM maoding_web_project p
+        WHERE
+            p.id = #{projectId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="listProjectByCompanyId" resultType="com.maoding.corp.module.corpserver.dto.ProjectDTO"
+            parameterType="java.util.Map">
+        SELECT
+        p.company_id,
+        p.id AS project_id,
+        p.project_name,
+        p.pstatus,
+        p.create_by,
+        p.create_date
+        FROM maoding_web_project p
+        LEFT JOIN maoding_web_project_task c ON p.id = c.project_id AND c.task_status = '0'
+        WHERE
+        (p.company_id = #{companyId,jdbcType=VARCHAR}
+        OR p.company_bid = #{companyId,jdbcType=VARCHAR}
+        OR c.company_id = #{companyId,jdbcType=VARCHAR})
+        <if test="syncDate != null">
+            <![CDATA[  and p.create_date <= #{syncDate,jdbcType=VARCHAR}  ]]>
+        </if>
+        GROUP BY p.id
+        ORDER BY p.create_date desc
+    </select>
+
+    <select id="listProjectIdByCompanyId" resultType="java.lang.String"
+            parameterType="java.lang.String">
+        SELECT p.id
+        FROM maoding_web_project p
+        LEFT JOIN maoding_web_project_task t ON p.id = t.project_id AND t.task_status = '0'
+        WHERE
+            p.company_id = #{companyId} OR p.company_bid = #{companyId} OR t.company_id = #{companyId}
+        GROUP BY p.id
+        ORDER BY p.create_date DESC
+    </select>
+
+    <select id="listProjectTask" resultType="com.maoding.corp.module.corpserver.model.ProjectTaskDO"
+            parameterType="java.util.Map">
+        SELECT
+        t.*
+        FROM
+        maoding_web_project_task t
+        WHERE (t.task_type=0 OR t.task_type=1 OR t.task_type=2) AND (t.task_status='0' OR t.task_status='1')
+        <if test="projectId != null">
+            AND t.project_id = #{projectId,jdbcType=VARCHAR}
+        </if>
+        <if test="syncDate != null">
+            <![CDATA[  and t.create_date <= #{syncDate,jdbcType=VARCHAR}  ]]>
+        </if>
+        ORDER BY t.task_level,t.create_date
+    </select>
+
+    <!-- 根据不同的参数查询我的任务 -->
+    <!--    <select id="selectMyTask" resultMap="BaseResultMap" parameterType="java.util.Map" >
+            select
+            <include refid="Base_Column_List" />
+            from maoding_web_my_task t
+            where 1=1 and t.param4='0'
+            <if test="handlerId != null" >
+                AND t.handler_id = #{handlerId,jdbcType=VARCHAR}
+            </if>
+            <if test="targetId != null" >
+                AND t.target_id = #{targetId,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                <choose>
+                    <when test="status =='0'.toString()">
+                        AND (status ='0' or status='3')
+                    </when>
+                    <otherwise>
+                        AND status = #{status,jdbcType=VARCHAR}
+                    </otherwise>
+                </choose>
+            </if>
+        </select>-->
+
+    <select id="listUserByCompanyId" resultType="com.maoding.corp.module.corpserver.dto.CoUserDTO"
+            parameterType="java.lang.String">
+        SELECT
+            u.id        AS companyUserId,
+            u.user_name AS companyUserName,
+            u.company_id,
+            a.id        AS accountId,
+            a.user_name AS accountName,
+            a.cellphone,
+            a.status
+        FROM maoding_web_company_user u
+            LEFT JOIN maoding_web_account a ON a.id = u.user_id
+        WHERE u.company_id = #{companyId,jdbcType=VARCHAR} AND a.id IS NOT NULL
+    </select>
+
+    <select id="listCompanyIdByProjectId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT DISTINCT company_id
+        FROM maoding_web_project_task
+        <where>
+            <![CDATA[ project_id = #{projectId} AND task_status = '0' AND task_type < 3 ]]>
+        </where>
+    </select>
+
+    <select id="getAccountByCellphone" resultType="com.maoding.corp.module.corpserver.model.AccountDO"
+            parameterType="java.lang.String">
+        SELECT a.*
+        FROM maoding_web_account a
+        WHERE a.cellphone = #{cellphone,jdbcType=VARCHAR}
+    </select>
+</mapper>

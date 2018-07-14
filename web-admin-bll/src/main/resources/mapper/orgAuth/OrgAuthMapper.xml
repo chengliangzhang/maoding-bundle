@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.orgAuth.dao.OrgAuthDAO">
+    <select id="listOrgAuthenticationInfo" resultType="com.maoding.admin.module.orgAuth.dto.OrgAuthDTO" parameterType="com.maoding.admin.module.orgAuth.dto.OrgAuthQueryDTO" >
+        select <include refid="com.maoding.admin.module.orgAuth.dao.CommonDAO.countSQL"/>
+            a.id as id, a.org_name, a.authentication_status, a.operator_name, a.reject_reason, a.legal_representative
+            ,a.business_license_number, a.business_license_type, a.apply_date, a.expiry_date
+            ,b.company_name as org_alias
+            ,c.approve_date as audit_date,c.audit_person as auditor_name,convert(c.audit_message,signed) as reject_type
+        from
+            maoding_web_org_auth a
+            INNER JOIN maoding_web_company b on (a.id=b.id)
+            LEFT JOIN maoding_web_org_auth_audit c on (c.is_new=1 and a.id=c.org_id)
+        where
+            (a.deleted is null or a.deleted=0)
+            <if test="id!=null">
+                and a.id=#{id}
+            </if>
+            <choose>
+                <when test="authenticationStatus!=null">
+                    and a.authentication_status=#{authenticationStatus}
+                </when>
+                <otherwise>
+                    <![CDATA[ and a.authentication_status>=1 ]]>
+                </otherwise>
+            </choose>
+            <if test="applyDateBefore!=null">
+                <![CDATA[ and #{expiryDateBefore}>=a.apply_date ]]>
+            </if>
+            <if test="applyDateAfter!=null">
+                <![CDATA[ and a.apply_date>=#{applyDateAfter} ]]>
+            </if>
+            <if test="expiryDateBefore!=null">
+                <![CDATA[ and #{expiryDateBefore}>=a.expiry_date ]]>
+            </if>
+            <if test="orgNameMask!=null">
+                and (a.org_name like concat('%',#{orgNameMask},'%'))
+            </if>
+            <if test="orgAliasMask!=null">
+                and (b.company_name like concat('%',#{orgAliasMask},'%'))
+            </if>
+            <if test="auditNameMask!=null">
+                and (c.audit_person like concat('%',#{auditNameMask},'%'))
+            </if>
+            <if test="operatorNameMask!=null">
+                and (a.operator_name like concat('%',#{operatorNameMask},'%'))
+            </if>
+        group by a.id
+        <if test="orderCondition!=null">
+            order by
+            <foreach collection="orderCondition" index="condition" item="direct" open=" " separator="," close="">
+                <if test="condition=='applyDate'">
+                    a.apply_date
+                </if>
+                <if test="condition=='auditDate'">
+                    c.approve_date
+                </if>
+                <if test="direct==-1">
+                    desc
+                </if>
+            </foreach>
+        </if>
+        <include refid="com.maoding.admin.module.orgAuth.dao.CommonDAO.limitSQL"/>
+    </select>
+    <select id="listOrgAuthAttach" resultType="com.maoding.admin.module.orgAuth.dto.OrgAuthAttachDTO" parameterType="java.util.List">
+        select d.company_id as company_id,d.type as type,d.file_group as file_group,d.file_path as file_path
+        from maoding_web_project_sky_drive d
+        where d.type in (5,8,9,10) and d.status='0'
+            <if test="list != null" >
+                and d.company_id in
+                <foreach collection="list" item="orgId" open="(" separator="," close=")">
+                    #{orgId}
+                </foreach>
+            </if>
+    </select>
+</mapper>

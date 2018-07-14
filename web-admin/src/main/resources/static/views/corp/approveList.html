@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="common::header(~{::title},~{::link})">
+    <title>卯丁后台</title>
+    <link rel="stylesheet" th:href="@{/assets/lib/datatables/datatables.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/datatables/plugins/bootstrap/datatables.bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/select2/css/select2.min.css}"/>
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
+<div class="clearfix"></div>
+<div class="page-container">
+    <th:block th:replace="common::nav"></th:block>
+
+    <div class="page-sidebar-wrapper" data-nav-id="corp-approveList"></div>
+
+    <div class="page-content-wrapper"></div>
+</div>
+
+<th:block th:replace="common::footer(~{::script})">
+    <!--<script type="text/javascript" th:src="@{/assets/js/datatable.js}"></script>-->
+    <script type="text/javascript" th:src="@{/assets/lib/datatables/datatables.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/datatables/plugins/bootstrap/datatables.bootstrap.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/select2/js/select2.min.js}"></script>
+</th:block>
+</body>
+</html>

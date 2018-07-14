@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.filecenter.module.file.dao.NetFileDAO">
+    <select id="getDirectoryDTOList" parameterType="com.maoding.filecenter.module.file.dto.DirectoryDTO"
+            resultType="com.maoding.filecenter.module.file.dto.DirectoryDTO">
+        SELECT t.`company_id` AS companyId,t.`project_id` AS projectId FROM
+            maoding_web_project_sky_drive t WHERE pid=#{pid}
+
+    </select>
+
+
+    <select id="getNetFileOrDir" parameterType="com.maoding.filecenter.module.file.dto.DirectoryDTO"
+            resultType="com.maoding.filecenter.module.file.dto.DirectoryDTO">
+        SELECT t.`company_id` AS companyId,t.`project_id` AS projectId FROM
+        maoding_web_project_sky_drive t
+        WHERE 1=1
+        <if test="pid==null">
+            AND pid is NULL
+        </if>
+        <if test="pid!=null">
+            AND pid=#{pid}
+        </if>
+        <if test="companyId!=null">
+            AND company_id=#{companyId}
+        </if>
+        <if test="fileName!=null">
+            AND file_name = #{fileName}
+        </if>
+        <if test="accountId!=null">
+            AND create_by = #{accountId}
+        </if>
+        <if test="type!=null">
+            AND type = #{type}
+        </if>
+    </select>
+
+
+    <select id="getNetFileByIds" parameterType="com.maoding.filecenter.module.file.dto.NetFileDTO"
+            resultType="com.maoding.filecenter.module.file.model.NetFileDO">
+        SELECT *
+        FROM maoding_web_project_sky_drive t
+        WHERE 1=1
+        <if test="ids!=null and ids.size()>0">
+           and id in
+            <foreach collection="ids" item="id" index="i" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

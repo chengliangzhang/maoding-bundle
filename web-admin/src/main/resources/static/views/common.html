@@ -1,0 +1,162 @@
+<!----------------------------------------------- header ----------------------------------------------------->
+<head th:fragment="header(title,links)">
+    <title th:replace="${title}">卯丁后台</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+
+    <link rel="stylesheet" th:href="@{/assets/lib/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/simple-line-icons/simple-line-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/font-awesome/css/font-awesome.min.css}"/>
+
+    <link rel="stylesheet" th:href="@{/assets/lib/bootstrap-sweetalert/sweetalert.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/toastr/toastr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/layer-3x/skin/default/layer.min.css}"/>
+
+    <th:block th:replace="${links}?:_" />
+
+    <link rel="stylesheet" th:href="@{/assets/css/themes/components-md.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/themes/plugins-md.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/themes/layout.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/themes/default.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/module.css}"/>
+    <script type="text/javascript">
+        window.rootPath='[(${#httpServletRequest.getContextPath()})]';
+        window.currentAccountName= '[[${session.accountName}]]';
+    </script>
+</head>
+
+<!----------------------------------------------- header_login ----------------------------------------------------->
+<head th:fragment="header_login(title,links)">
+    <title th:replace="${title}">卯丁后台</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+
+    <link rel="stylesheet" th:href="@{/assets/lib/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/simple-line-icons/simple-line-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/font-awesome/css/font-awesome.min.css}"/>
+
+    <link rel="stylesheet" th:href="@{/assets/lib/bootstrap-sweetalert/sweetalert.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/toastr/toastr.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/layer-3x/skin/default/layer.min.css}"/>
+
+    <th:block th:replace="${links}?:_" />
+
+    <link rel="stylesheet" th:href="@{/assets/css/themes/components-md.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/css/themes/plugins-md.min.css}"/>
+
+    <link rel="stylesheet" th:href="@{/assets/css/module.css}"/>
+    <script type="text/javascript">
+        window.rootPath='[(${#httpServletRequest.getContextPath()})]';
+    </script>
+</head>
+
+<!----------------------------------------------- nav ----------------------------------------------------->
+<th:block th:fragment="nav">
+    <div class="page-header navbar navbar-fixed-top">
+        <div class="page-header-inner ">
+            <div class="page-logo">
+                <a href="javascript:void(0);">
+                    <img th:src="@{/assets/img/logo_white.png}" alt="logo" class="logo-default" /> </a>
+                <div class="menu-toggler sidebar-toggler">
+                    <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
+                </div>
+            </div>
+
+            <a href="javascript:void(0);" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
+
+            <div class="page-top">
+
+                <div class="top-menu">
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="separator hide"> </li>
+                        <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                        <!-- DOC: Apply "dropdown-hoverable" class after "dropdown" and remove data-toggle="dropdown" data-hover="dropdown" data-close-others="true" attributes to enable hover dropdown mode -->
+                        <!-- DOC: Remove "dropdown-hoverable" and add data-toggle="dropdown" data-hover="dropdown" data-close-others="true" attributes to the below A element with dropdown-toggle class -->
+
+                        <!-- BEGIN USER LOGIN DROPDOWN -->
+                        <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                        <li class="dropdown dropdown-user dropdown-dark">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                                <span class="username username-hide-on-mobile" th:text="${session.accountName}"></span>
+                                <!-- DOC: Do not remove below empty space(&nbsp;) as its purposely used -->
+                                <img alt="" class="img-circle"/> </a>
+                            <ul class="dropdown-menu dropdown-menu-default">
+                               <!-- <li>
+                                    <a href="javascript:void(0);">
+                                        <i class="icon-user"></i> 个人资料 </a>
+                                </li>
+                                <li class="divider"> </li>-->
+                                <li>
+                                    <a th:href="@{/account/logout}">
+                                        <i class="icon-key"></i>注销</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<!----------------------------------------------- footer ----------------------------------------------------->
+<th:block th:fragment="footer(scripts)">
+    <div class="page-footer">
+        <!--<div class="page-footer-inner"><strong>Copyright</strong>&nbsp;imaoding.com&nbsp;©&nbsp;2015-2017</div>-->
+        <div class="scroll-to-top">
+            <i class="icon-arrow-up"></i>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/assets/js/vendor.min.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        _.mixin(s.exports());
+    </script>
+    <script type="text/javascript" th:src="@{/assets/lib/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/jquery-slimscroll/jquery.slimscroll.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/bootstrap-sweetalert/sweetalert.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/toastr/toastr.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/jquery.blockui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/layer-3x/layer.min.js}"></script>
+
+    <th:block th:replace="${scripts}?:_" />
+
+    <script type="text/javascript" th:src="@{/assets/js/app.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/layout.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/demo.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/js/quick-sidebar.min.js}"></script>
+    <!--<script type="text/javascript" th:src="@{/assets/js/quick-nav.min.js}"></script>-->
+
+    <script type="text/javascript" th:src="@{/assets/js/module.js}"></script>
+</th:block>
+
+<!----------------------------------------------- footer_login ----------------------------------------------------->
+<th:block th:fragment="footer_login(scripts)">
+    <div class="page-footer">
+        <!--<div class="page-footer-inner"><strong>Copyright</strong>&nbsp;imaoding.com&nbsp;©&nbsp;2015-2017</div>-->
+        <div class="scroll-to-top">
+            <i class="icon-arrow-up"></i>
+        </div>
+    </div>
+
+    <script type="text/javascript" th:src="@{/assets/js/vendor.min.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        _.mixin(s.exports());
+    </script>
+    <script type="text/javascript" th:src="@{/assets/lib/bootstrap/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/jquery-slimscroll/jquery.slimscroll.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/bootstrap-sweetalert/sweetalert.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/toastr/toastr.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/jquery.blockui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/layer-3x/layer.min.js}"></script>
+
+    <th:block th:replace="${scripts}?:_" />
+
+    <script type="text/javascript" th:src="@{/assets/js/module.js}"></script>
+</th:block>

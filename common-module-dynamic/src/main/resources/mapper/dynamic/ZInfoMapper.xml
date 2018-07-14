@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.common.module.dynamic.dao.ZInfoDAO">
+    <select id="getCompanyUserByCompanyUserId" resultType="com.maoding.common.module.dynamic.model.CompanyUserEntity" parameterType="java.lang.String">
+        SELECT id, company_id, user_id, user_name, relation_type, audit_status, employee_type, employee_status, pin_yin,
+            entry_time, departure_time, illustration, phone, email, seq,departure_reason,remark, create_date,
+            create_by, update_date, update_by
+        FROM
+            maoding_web_company_user
+        WHERE
+            id=#{companyUserId}
+        LIMIT 1
+    </select>
+    <select id="getCompanyUserIdByCompanyIdAndUserId" resultType="java.lang.String" parameterType="java.util.Map">
+        SELECT
+          id
+        FROM
+          maoding_web_company_user
+        WHERE
+          company_id=#{companyId} and user_id=#{userId}
+        LIMIT 1
+    </select>
+</mapper>

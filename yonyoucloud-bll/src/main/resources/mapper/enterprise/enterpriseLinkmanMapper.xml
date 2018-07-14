@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.yongyoucloud.module.enterprise.dao.EnterpriseOrgLinkmanDAO">
+
+    <resultMap id="BaseResultMap" type="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseProjectLinkmanDTO">
+        <id column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="enterprise_org_id" property="enterpriseOrgId" jdbcType="VARCHAR"/>
+        <collection property="linkmanList" ofType="com.maoding.yongyoucloud.module.enterprise.dto.OperateLinkmanDTO" >
+            <id column="linkman_id" property="id" jdbcType="VARCHAR"/>
+            <result column="name" property="name" jdbcType="VARCHAR"/>
+            <result column="phone" property="phone" jdbcType="VARCHAR"/>
+            <result column="email" property="email" jdbcType="VARCHAR"/>
+            <result column="seq" property="seq" jdbcType="VARCHAR"/>
+            <result column="position" property="position" jdbcType="VARCHAR"/>
+            <result column="remark" property="remark" jdbcType="VARCHAR"/>
+            <result column="project_linkman_id" property="projectLinkmanId" />
+        </collection>
+    </resultMap>
+    <select id="getLinkman" parameterType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO" resultMap="BaseResultMap">
+        SELECT a.id as enterprise_org_id,
+        d.id as project_id,d.project_name,
+        e.id as linkman_id,e.name,e.phone,e.email,e.seq,e.position,e.remark,
+        e.project_linkman_id
+        from maoding_web_enterprise_org a
+        INNER JOIN maoding_web_project d on (d.pstatus = '0' and d.construct_company = a.enterprise_id)
+        LEFT JOIN (select c.id as project_linkman_id, c.project_id,b.*
+                   from maoding_web_enterprise_org_linkman b ,
+                   maoding_web_enterprise_project_linkman c where c.linkman_id = b.id
+                   ) e on a.id = e.enterprise_org_id and d.id = e.project_id
+        where a.enterprise_id = #{enterpriseId}
+        and   a.company_id = #{companyId}
+        <if test="projectId!=null">
+            and e.project_id = #{projectId}
+        </if>
+    </select>
+
+
+    <select id="getProjectEditRole" parameterType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO" resultType="int">
+        SELECT COUNT(1) from maoding_web_project_member
+        where project_id = #{projectId}
+        and company_id = #{companyId}
+        and account_id =  #{accountId}
+        and (member_type = 0 or member_type = 1);
+    </select>
+
+    <select id="getProjectEditRole2" parameterType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO" resultType="int">
+        SELECT count(1) from maoding_web_user_permission
+        where company_id = #{companyId}
+        and user_id = #{accountId}
+        and permission_id = '20'
+    </select>
+</mapper>

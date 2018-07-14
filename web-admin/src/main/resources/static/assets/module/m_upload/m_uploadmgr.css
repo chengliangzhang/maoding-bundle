@@ -1,0 +1,50 @@
+/*uploadmgr*/
+.uploadmgr {
+    border-top: solid 1px #eee !important;
+}
+
+.btn-u-green2{
+    background: #72c02c;
+}
+
+.btn-u-green2:hover,.btn-u-green2:focus,.btn-u-green2:active,.btn-u-green2.active{
+    background: #5fb611;
+}
+
+.uploadmgr .upload-item-list{
+    margin: 10px 0 0 0;
+    padding: 10px 10px 0 0;
+    max-height: 230px;
+    overflow: scroll;
+}
+
+.uploadmgr .webuploader-pick {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    overflow: inherit;
+    /* background: #00b7ee; */
+    /* padding: 10px 15px; */
+    /* color: #fff; */
+    /* text-align: center; */
+    /* border-radius: 3px; */
+    /* overflow: hidden; */
+}
+.uploadmgr .webuploader-pick {
+    background: #e67e22 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+.uploadmgr .webuploader-pick-hover{
+    /*background: #d35400 !important;*/
+    background: #e67e22 !important;
+}
+
+.uploadmgr .btn-select{
+    background: #e67e22 !important;
+}
+
+.uploadmgr .btn-select:hover{
+    background: #e67e22 !important;
+}

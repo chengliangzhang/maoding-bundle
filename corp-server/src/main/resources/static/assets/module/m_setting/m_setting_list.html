@@ -1,0 +1,22 @@
+{{each list as o i}}
+<tr>
+    <td>{{o.corpEndpoint}}</td>
+    <td>{{o.companyId}}</td>
+    <td>{{(_isNullOrBlank(o.companyName)?'<span style="color:red;">无法匹配</span>':o.companyName)}}</td>
+    <td>总空间：{{_formatFileSize(o.totalSize)}} <br/>
+        协同：{{_formatFileSize(o.corpSize)}} {{o.corpOnCloud===true?'（云端部署）':'（本地部署）'}} <br/>
+        文档库：{{_formatFileSize(o.docmgrSize)}} <br/>
+        其他：{{_formatFileSize(o.otherSize)}} <br/>
+        可用空间：{{_formatFileSize(o.freeSize)}}<br/>
+        <a name="btnSwitchDeployCorp" href="javacript:void(0)" data-company-id="{{o.companyId}}"
+           class="btn btn-warning btn-xs">切换协同部署方式</a>
+        <a name="btnRecalcSize" href="javacript:void(0)" data-company-id="{{o.companyId}}"
+           class="btn btn-success btn-xs">重新统计文档库和其他</a><br/>
+    </td>
+    <td>{{o.remarks}}</td>
+    <td>
+        <a name="btnRemove" href="javacript:void(0)" data-id="{{o.id}}" class="btn btn-danger btn-sm ">删除</a>&nbsp;<a
+            name="btnSync" href="javacript:void(0)" data-id="{{o.id}}" class="btn btn-success btn-sm ">立即同步</a>
+    </td>
+</tr>
+{{/each}}

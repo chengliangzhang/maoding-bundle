@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>配置</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+
+    <link rel="stylesheet" th:href="@{/assets/lib/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/select2/css/select2.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/toastr/toastr.min.css}"/>
+</head>
+<body>
+<div class="container-fluid">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                EndPoint
+            </th>
+            <th>
+                组织Id
+            </th>
+            <th>
+                组织名
+            </th>
+            <th>
+                网盘
+            </th>
+            <th>
+                备注
+            </th>
+            <th>
+                操作
+            </th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        </tbody>
+    </table>
+    <div style="margin: 20px 0 5px 0;border-bottom: 1px solid #ddd;padding: 0;">&nbsp;</div>
+    <div class="row">
+        <form class="form">
+            <div class="form-group col-sm-3">
+                <input type="text" class="form-control" id="corpEndpoint" placeholder="协同端标记名">
+            </div>
+            <div  class="form-group col-sm-3">
+                <input type="text" class="form-control" id="companyId" placeholder="组织Id">
+            </div>
+            <div  class="form-group col-sm-3">
+                <input type="text" class="form-control" id="remarks" placeholder="备注">
+            </div>
+            <div class="form-group col-sm-3">
+                <a id="btnAdd" href="javacript:void(0)"  class="btn btn-primary btn-sm ">添加同步组织</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/assets/js/vendor.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/bootstrap/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/select2/js/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/lib/toastr/toastr.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/module.min.js}"></script>
+<script type="text/javascript">
+    $(function () {
+        _.mixin(s.exports());
+        corpserver_setting.init();
+    });
+</script>
+</body>
+</html>

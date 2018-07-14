@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.system.dao.ViewDAO">
+
+    <select id="getMaxViewCode" parameterType="java.lang.String" resultType="java.lang.String">
+        select max(a.view_code)
+        from maoding_view a
+        where 1=1
+        <if test="pid!=null">
+        and a.pid = #{pid}
+        </if>
+        <if test="pid==null">
+            and a.pid is null
+        </if>
+    </select>
+
+    <select id="getMaxSeq" resultType="java.lang.Integer">
+        select ifnull(max(a.seq)+10,10)
+        from maoding_view a
+    </select>
+
+    <resultMap id="viewMap" type="com.maoding.admin.module.system.dto.ViewOperatorDTO">
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="viewName" jdbcType="VARCHAR" />
+        <result column="view_code" property="viewCode" jdbcType="VARCHAR" />
+        <collection property="childList" ofType="com.maoding.admin.module.system.dto.ViewOperatorDTO">
+            <id column="child_id" property="id" jdbcType="VARCHAR" />
+            <result column="child_name" property="viewName" jdbcType="VARCHAR" />
+            <result column="child_code" property="viewCode" jdbcType="VARCHAR" />
+            <result column="is_select" property="isSelect" jdbcType="INTEGER" />
+            <collection property="operateList" ofType="com.maoding.admin.module.system.dto.OperateDTO">
+                <id column="operate_id" property="id" jdbcType="VARCHAR" />
+                <result column="operate_name" property="operateName" jdbcType="VARCHAR" />
+                <result column="operate_seq" property="seq" jdbcType="VARCHAR" />
+                <result column="operate_select" property="operateSelect" jdbcType="INTEGER" />
+            </collection>
+        </collection>
+    </resultMap>
+    
+    <select id="getViewList" resultMap="viewMap">
+        select a.id,a.name,a.view_code,b.id as child_id,b.name as child_name,b.view_code as child_code,
+        c.id as operate_id,c.name as operate_name,c.seq as operate_seq
+        from maoding_view a
+        LEFT JOIN maoding_view b on a.id = b.pid
+        LEFT JOIN maoding_operate_permission c on b.view_code = c.view_code
+        where a.pid is null
+        order by a.seq,b.seq,c.seq
+    </select>
+
+    <select id="getParentView" resultMap="viewMap">
+        select a.id,a.name,a.view_code
+        from maoding_view a
+        where a.pid is null
+        order by a.seq
+    </select>
+
+    <select id="getAllViewByRoleCode" resultMap="viewMap" parameterType="java.lang.String">
+        select a.id,a.name,a.view_code,b.id as child_id,b.name as child_name,b.view_code as child_code,
+        c.id as operate_id,c.name as operate_name,c.seq as operate_seq,
+        if(c.id is null ,null,IF (d.id IS NULL, 0, 1)) AS operate_select
+        from maoding_view a
+        LEFT JOIN maoding_view b on a.id = b.pid
+        LEFT JOIN maoding_operate_permission c on b.view_code = c.view_code
+        LEFT JOIN maoding_role_permission d on c.id = d.permission_id and d.role_code = #{roleCode}
+        where a.pid is null
+        order by a.seq ,b.seq,c.seq
+    </select>
+
+    <!--<select id="getProjectLevelView" resultMap="viewMap">-->
+        <!--select a.id,a.name,a.view_code,b.id as child_id,b.name as child_name,b.view_code as child_code,-->
+        <!--c.id as operate_id,c.name as operate_name,c.seq as operate_seq,-->
+        <!--from maoding_view a-->
+        <!--INNER JOIN maoding_view b on a.id = b.pid-->
+        <!--INNER JOIN maoding_operate_permission c on b.view_code = c.view_code-->
+        <!--LEFT JOIN maoding_role_permission d on c.id = d.permission_id-->
+        <!--LEFT JOIN maoding_role e on d.role_code = e.role_code-->
+        <!--where a.pid is null-->
+        <!--order by a.seq,b.seq,c.seq-->
+    <!--</select>-->
+
+</mapper>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="common::header(~{::title},~{::link})">
+    <title>卯丁后台</title>
+    <link rel="stylesheet" th:href="@{/assets/lib/mricodePagination/mricode.pagination.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/select2/css/select2.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/select2/css/select2-bootstrap.min.css}"/>
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
+<div class="clearfix"></div>
+<div class="page-container">
+    <th:block th:replace="common::nav"></th:block>
+
+    <div class="page-sidebar-wrapper" data-nav-id="orgAuth-approveList"></div>
+
+    <div class="page-content-wrapper"></div>
+</div>
+
+<th:block th:replace="common::footer(~{::script})">
+    <script type="text/javascript" th:src="@{/assets/lib/mricodePagination/mricode.pagination.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/select2/js/select2.full.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/select2/js/i18n/zh-CN.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        $(function () {
+            main.init(orgAuth_approveList);
+        });
+    </script>
+</th:block>
+</body>
+</html>

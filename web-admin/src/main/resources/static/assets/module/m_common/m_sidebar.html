@@ -1,0 +1,69 @@
+<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+<div class="page-sidebar navbar-collapse collapse">
+    <!-- BEGIN SIDEBAR MENU -->
+    <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+    <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+    <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+    <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+    <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+        <!--<li class="nav-item start">
+            <a href="javascript:void(0);" class="nav-link nav-toggle">
+                <i class="icon-home"></i>
+                <span class="title">Dashboard</span>
+                <span class="arrow open"></span>
+            </a>
+        </li>-->
+        <li class="heading">
+            <h3 class="uppercase">企业认证</h3>
+        </li>
+        <li class="nav-item">
+            <a href="{{_url('/orgAuth/approveList')}}" class="nav-link" data-nav-id="orgAuth-approveList">
+                <i class="icon-briefcase"></i>
+                <span class="title">认证审核</span>
+                <span class="selected"></span>
+            </a>
+        </li>
+        <li class="heading">
+            <h3 class="uppercase">历史数据</h3>
+        </li>
+        <li class="nav-item">
+            <a href="{{_url('/historyData/entry')}}" class="nav-link" data-nav-id="historyData-entry">
+                <i class="icon-briefcase"></i>
+                <span class="title">导入</span>
+            </a>
+        </li>
+        <li class="heading">
+            <h3 class="uppercase">后台配置</h3>
+        </li>
+        <li class="nav-item">
+            <a href="{{_url('/configuration/menuSet')}}" class="nav-link" data-nav-id="configuration-menuSet">
+                <i class="icon-briefcase"></i>
+                <span class="title">菜单配置</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{_url('/configuration/roleViews')}}" class="nav-link" data-nav-id="configuration-roleViews">
+                <i class="icon-briefcase"></i>
+                <span class="title">角色菜单配置</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{_url('/configuration/rulesSet')}}" class="nav-link" data-nav-id="configuration-rulesSet">
+                <i class="icon-briefcase"></i>
+                <span class="title">规则配置</span>
+            </a>
+        </li>
+        <!--<li class="heading">
+            <h3 class="uppercase">项目协同</h3>
+        </li>
+        <li class="nav-item">
+            <a href="javascript:void(0);" class="nav-link" data-nav-id="corp-approveList">
+                <i class="icon-briefcase"></i>
+                <span class="title">开通审核</span>
+            </a>
+        </li>-->
+    </ul>
+</div>

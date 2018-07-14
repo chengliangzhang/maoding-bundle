@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.ProjectMemberDAO">
+
+    <select id="listMemberByTaskId" resultType="com.maoding.corp.module.corpserver.model.ProjectMemberDO"
+            parameterType="java.lang.String">
+        SELECT *
+        FROM
+            maoding_web_project_member m
+        WHERE m.node_id = #{taskId} AND m.status = 0 AND m.deleted = 0
+    </select>
+
+    <select id="getTaskPrincipal" resultType="com.maoding.corp.module.corpserver.model.ProjectMemberDO" parameterType="java.lang.String">
+        SELECT *
+        FROM
+            maoding_web_project_member m
+        WHERE (m.target_id=#{taskId} OR m.node_id = #{taskId}) AND m.status = 0 AND m.deleted = 0 AND m.member_type = 3
+    </select>
+
+</mapper>

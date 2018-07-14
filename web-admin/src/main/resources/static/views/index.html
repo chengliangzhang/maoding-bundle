@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="common::header(~{::title},~{::link})">
+    <title>卯丁后台</title>
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
+<div class="clearfix"></div>
+<div class="page-container">
+    <th:block th:replace="common::nav"></th:block>
+
+    <div class="page-sidebar-wrapper"></div>
+
+    <div class="page-content-wrapper"></div>
+</div>
+
+<th:block th:replace="common::footer(~{::script})">
+    <script type="text/javascript" th:inline="javascript">
+        $(function () {
+            main.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

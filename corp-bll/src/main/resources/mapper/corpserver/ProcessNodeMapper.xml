@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.ProcessNodeDAO">
+
+    <select id="listProcessNodeByTaskId"
+            resultType="com.maoding.corp.module.corpserver.dto.CoProjectProcessNodeDTO"
+            parameterType="java.lang.String">
+        select
+        n.id, n.process_id, n.node_name, n.seq, n.node_seq,n.status,n.company_user_id,n.complete_time,u.user_name as
+        companyUserName,a.id as accountId,a.user_name as accountName
+        from maoding_web_project_process_node n
+        LEFT JOIN maoding_web_company_user u on u.id = n.company_user_id
+        LEFT JOIN maoding_web_account a on a.id=u.user_id
+        where n.process_id = #{taskId} AND a.id IS NOT NULL
+        order by n.seq
+    </select>
+
+    <select id="getProcessNodeById" resultType="com.maoding.corp.module.corpserver.dto.CoProjectProcessNodeDTO"
+            parameterType="java.lang.String">
+        SELECT
+            n.id,
+            n.process_id,
+            n.node_name,
+            n.seq,
+            n.node_seq,
+            n.status,
+            n.company_user_id,
+            n.complete_time,
+            u.user_name AS companyUserName,
+            a.id        AS accountId,
+            a.user_name AS accountName
+        FROM maoding_web_project_process_node n
+            LEFT JOIN maoding_web_company_user u ON u.id = n.company_user_id
+            LEFT JOIN maoding_web_account a ON a.id = u.user_id
+        WHERE n.id = #{id,jdbcType=VARCHAR} AND a.id IS NOT NULL
+    </select>
+
+
+    <update id="updateProcessNodeAsFinished" parameterType="java.lang.String">
+        UPDATE maoding_web_project_process_node
+        SET complete_time = now()
+        WHERE id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateProcessNodeAsActived" parameterType="java.lang.String">
+        UPDATE maoding_web_project_process_node
+        SET complete_time = NULL
+        WHERE id = #{id,jdbcType=VARCHAR}
+    </update>
+
+</mapper>

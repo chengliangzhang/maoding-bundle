@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.system.dao.OperatePermissionDAO">
+
+    <select id="getMaxPermission" parameterType="java.lang.String" resultType="com.maoding.admin.module.system.model.OperatePermissionDO">
+        select *
+        from maoding_operate_permission a
+        where 1=1
+        and a.view_code like #{viewCode} '%'
+        order by a.seq desc
+        limit 1
+    </select>
+
+    <select id="getMaxPermissionByPid" parameterType="java.lang.String" resultType="com.maoding.admin.module.system.model.OperatePermissionDO">
+        select *
+        from maoding_operate_permission a
+        where 1=1
+        <if test="pid!=null">
+            and a.pid = #{pid}
+        </if>
+        <if test="pid==null">
+            and a.pid is null
+        </if>
+        order by a.seq desc
+        limit 1
+    </select>
+
+    <select id="getMaxSeq" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select ifnull(max(a.seq)+10,10)
+        from maoding_operate_permission a
+        where 1=1
+        <if test="pid!=null">
+            and a.pid = #{pid}
+        </if>
+        <if test="pid==null">
+            and a.pid is null
+        </if>
+    </select>
+
+    <resultMap id="viewMap" type="com.maoding.admin.module.system.dto.ViewOperatorDTO">
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="viewName" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <collection property="childList" ofType="com.maoding.admin.module.system.dto.ViewOperatorDTO">
+            <id column="child_id" property="id" jdbcType="VARCHAR" />
+            <result column="child_name" property="viewName" jdbcType="VARCHAR" />
+            <result column="child_code" property="code" jdbcType="VARCHAR" />
+            <result column="operate_select" property="isSelect" jdbcType="INTEGER" />
+            <collection property="operateList" ofType="com.maoding.admin.module.system.dto.OperateDTO">
+                <id column="operate_id" property="id" jdbcType="VARCHAR" />
+                <result column="operate_name" property="operateName" jdbcType="VARCHAR" />
+                <result column="operate_seq" property="seq" jdbcType="VARCHAR" />
+                <result column="operate_select" property="operateSelect" jdbcType="INTEGER" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getViewList" resultMap="viewMap">
+        select a.id,a.name,a.code,b.id as child_id,b.name as child_name,b.code as child_code,
+        c.id as operate_id,c.name as operate_name,c.code as operate_code,c.seq as operate_seq
+        from maoding_operate_permission a
+        LEFT JOIN maoding_operate_permission b on a.id = b.pid
+        LEFT JOIN maoding_operate_permission c on b.id = c.pid
+        where a.pid is null
+        order by a.seq,b.seq,c.seq
+    </select>
+
+    <select id="getParentView" resultMap="viewMap">
+        select a.id,a.name,a.code
+        from maoding_operate_permission a
+        where a.pid is null
+        order by a.seq
+    </select>
+
+    <select id="getAllViewByRoleCode" resultMap="viewMap" parameterType="java.lang.String">
+        select a.id,a.name,a.code,b.id as child_id,b.name as child_name,b.code as child_code,
+        c.id as operate_id,c.name as operate_name,c.seq as operate_seq,
+        if(b.id is null ,null,IF (d.id IS NULL, 0, 1)) AS operate_select
+        from maoding_operate_permission a
+        LEFT JOIN maoding_operate_permission b on a.id = b.pid
+        LEFT JOIN maoding_operate_permission c on b.id = c.pid
+        LEFT JOIN maoding_role_permission d on b.code = d.permission_code and d.role_code = #{roleCode}
+        where a.pid is null
+        order by a.seq ,b.seq,c.seq
+    </select>
+</mapper>

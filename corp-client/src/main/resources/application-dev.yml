@@ -1,0 +1,72 @@
+server:
+   port: 8085
+   context-path:
+spring:
+   jmx:
+     enabled: true
+   mvc:
+     throw-exception-if-no-handler-found: true
+   resources:
+     add-mappings: false
+
+# ===================================================================
+# Druid
+# ===================================================================
+druid:
+    url: jdbc:mysql://172.16.6.71:3306/maoding_corp_new
+    username: idccapp
+    password: idccapp
+    driverClassName: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource   # 使用Druid数据源
+    initialSize: 5   # 初始化连接数量
+    maxActive: 10   # 最大并发连接数
+    minIdle: 1    # 最小空闲连接数
+    maxWait: 60000   # 配置获取连接等待超时的时间
+    removeAbandoned: true   # 超过时间限制是否回收
+    removeAbandonedTimeout: 180    # 超过时间限制多长
+    timeBetweenEvictionRunsMillis: 60000   # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    minEvictableIdleTimeMillis: 300000   # 配置一个连接在池中最小生存的时间，单位是毫秒
+    validationQuery: select 'x'   # 用来检测连接是否有效的sql，要求是一个查询语句
+    testWhileIdle: true   # 申请连接的时候检测
+    testOnBorrow: false   # 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+    testOnReturn: false    # 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+    poolPreparedStatements: false    # 是否缓存preparedStatement，也就是PSCache。PSCache对支持游标的数据库性能提升巨大，比如说oracle。在mysql下建议关闭。
+    maxOpenPreparedStatements: 20
+    maxPoolPreparedStatementPerConnectionSize: 50
+    # 属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
+    # 监控统计用的filter:stat
+    # 日志用的filter:log4j
+    # 防御SQL注入的filter:wall
+    filters: stat
+
+# ===================================================================
+# Mybatis
+# ===================================================================
+mybatis:
+    config-location: classpath:mybatis-config.xml
+    mapper-locations: classpath*:mapper/**/*Mapper.xml
+
+mapper:
+    mappers:
+        - com.maoding.core.base.BaseDao
+    not-empty: false
+    identity: MYSQL
+
+# ===================================================================
+# CorpClient
+# ===================================================================
+corpClient:
+    endPoint: ep1   #卯丁协同客户端Id（唯一性标识）
+    corpServer: http://192.168.17.168:8084/corpserver    #卯丁协同服务器
+    #corpServer: http://192.168.17.168:8084/collaboration
+
+    sowServer: http://192.168.33.144/SOWAPI   #第三方协同服务器
+
+# ===================================================================
+# Redisson
+# ===================================================================
+redisson:
+    #address: "redis://172.16.6.73:6679"
+    #password: "123456"
+    address: "redis://192.168.17.168:6679"
+    password: ""

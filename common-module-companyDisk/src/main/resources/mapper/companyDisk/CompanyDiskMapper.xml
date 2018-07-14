@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.common.module.companyDisk.dao.CompanyDiskDAO">
+    <update id="updateWithOptimisticLock" parameterType="com.maoding.common.module.companyDisk.model.CompanyDiskDO">
+        UPDATE maoding_corp_company_disk
+        <trim suffixOverrides=",">
+            <set>
+                up_version=up_version+1,
+                <if test="totalSize != null">total_size =#{totalSize},</if>
+                <if test="corpSize != null">corp_size =#{corpSize},</if>
+                <if test="docmgrSize != null">docmgr_size =#{docmgrSize},</if>
+                <if test="otherSize != null">other_size =#{otherSize},</if>
+                <if test="freeSize != null">free_size =#{freeSize},</if>
+                <if test="corpOnCloud != null">corp_on_cloud =#{corpOnCloud},</if>
+                <if test="updateDate != null">update_date =#{updateDate},</if>
+            </set>
+            WHERE id=#{id} AND up_version=#{upVersion}
+        </trim>
+    </update>
+
+    <select id="listAll" resultType="com.maoding.common.module.companyDisk.model.CompanyDiskDO">
+        SELECT *
+        FROM maoding_corp_company_disk;
+    </select>
+
+    <select id="listUnInitCompanyId" resultType="java.lang.String">
+        SELECT c.id
+        FROM maoding_web_company c
+        WHERE c.status = '0' AND c.id NOT IN (SELECT d.company_id
+                                              FROM maoding_corp_company_disk d);
+    </select>
+
+    <select id="sumDocmgrSizeByCompanyId" parameterType="java.lang.String" resultType="java.lang.Long">
+        SELECT COALESCE(SUM(d.file_size), 0)
+        FROM maoding_web_project_sky_drive d
+        WHERE d.type = 1 AND d.status = '0' AND d.company_id = #{companyId}
+    </select>
+
+    <select id="sumOtherSizeByCompanyId" parameterType="java.lang.String" resultType="java.lang.Long">
+        SELECT COALESCE(SUM(d.file_size), 0)
+        FROM maoding_web_project_sky_drive d
+        WHERE d.status = '0' AND d.company_id = #{companyId}
+        <![CDATA[ AND  d.type > 1  ]]>
+    </select>
+</mapper>

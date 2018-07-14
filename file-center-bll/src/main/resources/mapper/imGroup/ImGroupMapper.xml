@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.filecenter.module.im.dao.ImGroupDAO">
+    <update id="updateGroupImg" parameterType="com.maoding.filecenter.module.im.dto.GroupImgUpdateDTO">
+        UPDATE maoding_im_group
+        SET group_img = #{img,jdbcType=VARCHAR}
+        WHERE id = #{orgId,jdbcType=VARCHAR} AND group_type = #{groupType,jdbcType=INTEGER}
+    </update>
+</mapper>

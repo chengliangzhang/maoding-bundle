@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.im.module.imQueue.dao.ImQueueDAO">
+    <update id="updateWithOptimisticLock" parameterType="com.maoding.im.module.imQueue.model.ImQueueDO">
+        UPDATE maoding_im_queue
+        <trim suffixOverrides=",">
+            <set>
+                up_version=up_version+1,
+                <if test="reason != null">reason =#{reason},</if>
+                <if test="retry != null">retry =#{retry},</if>
+                <if test="deleted != null">deleted =#{deleted},</if>
+                <if test="updateDate != null">update_date =#{updateDate},</if>
+            </set>
+            WHERE id=#{id} AND up_version=#{upVersion}
+        </trim>
+    </update>
+    <select id="listWaitingQueue" resultType="com.maoding.im.module.imQueue.model.ImQueueDO">
+        SELECT * FROM maoding_im_queue
+        <where>
+            <![CDATA[ deleted=0 AND retry<5 AND queue_status = 0 ]]>
+        </where>
+        order by queue_no limit 0,#{count}
+    </select>
+</mapper>

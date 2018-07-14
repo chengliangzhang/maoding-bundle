@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.dictionary.dao.DictionaryDao">
+
+    <select id="getDictionaryByCode" parameterType="java.lang.String" resultType="com.maoding.admin.module.dictionary.dto.DictionaryDTO">
+        select a.id,a.code,a.name,a.vl as value
+        from maoding_data_dictionary a
+        INNER JOIN maoding_data_dictionary b on a.pid = b.id
+        where 1=1
+        and b.code= #{code}
+        order by a.seq
+    </select>
+
+</mapper>

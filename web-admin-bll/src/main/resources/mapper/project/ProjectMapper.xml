@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.admin.module.historyData.dao.ProjectDAO">
+    <select id="getProject" parameterType="com.maoding.admin.module.historyData.dto.ProjectQueryDTO" resultType="com.maoding.admin.module.historyData.model.ProjectDO">
+        select *
+        from maoding_web_project a
+        where
+            a.pstatus='0'
+            <if test="id!=null">
+                and a.id=#{id}
+            </if>
+            <if test="companyId!=null">
+                and a.company_id=#{companyId}
+            </if>
+            <if test="projectNo!=null">
+                and a.project_no=#{projectNo}
+            </if>
+            <if test="projectName!=null">
+                and a.project_name=#{projectName}
+            </if>
+            <if test="createDate!=null">
+                and a.create_date=#{createDate}
+            </if>
+        <include refid="com.maoding.admin.module.orgAuth.dao.CommonDAO.limitSQL"/>
+    </select>
+</mapper>

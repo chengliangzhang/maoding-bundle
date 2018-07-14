@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.yongyoucloud.module.enterprise.dao.EnterpriseDAO">
+
+    <select id="getEnterprise" parameterType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO"
+            resultType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseDTO">
+        SELECT a.corpname,a.id, b.id as enterprise_org_id,b.company_id
+        from maoding_web_enterprise a
+        INNER  JOIN maoding_web_enterprise_org b on a.id = b.enterprise_id
+        INNER JOIN maoding_web_project c on a.id = c.construct_company and c.pstatus=0
+        where b.company_id = #{companyId}
+        group by a.id
+        <if test="pageSize != null">
+            limit
+            <if test="startLine != null">
+                #{startLine},
+            </if>
+            #{pageSize}
+        </if>
+    </select>
+
+    <select id="getEnterpriseByName" parameterType="com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO"
+            resultType="com.maoding.yongyoucloud.module.enterprise.model.EnterpriseDO">
+        SELECT a.*
+        from maoding_web_enterprise a
+        where a.corpname = #{name}
+        group by a.id
+        order by a.enterprise_type
+        limit 1
+    </select>
+</mapper>

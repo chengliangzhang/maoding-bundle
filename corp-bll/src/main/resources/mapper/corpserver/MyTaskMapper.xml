@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.maoding.corp.module.corpserver.dao.MyTaskDAO">
+
+    <update id="updateMyTaskAsFinished">
+        UPDATE maoding_web_my_task t
+        SET status = '1'
+        WHERE t.id = #{myTaskId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateMyTaskAsActived">
+        UPDATE maoding_web_my_task t
+        SET status = '0'
+        WHERE t.id = #{myTaskId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateMyTaskAsInvalid">
+        UPDATE maoding_web_my_task t
+        SET param4 = '1'
+        WHERE t.id = #{myTaskId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getMyTaskByProcessNodeId" resultType="com.maoding.corp.module.corpserver.model.MyTaskDO"
+            parameterType="java.lang.String">
+        SELECT t.*
+        FROM maoding_web_my_task t
+        WHERE t.target_id = #{processNodeId,jdbcType=VARCHAR} AND (t.status = '0' OR t.status = '1') AND t.param4 = '0'
+    </select>
+
+    <select id="getPrincipalTaskByProjectTaskId" resultType="com.maoding.corp.module.corpserver.model.MyTaskDO"
+            parameterType="java.lang.String">
+        SELECT t.*
+        FROM maoding_web_my_task t
+        WHERE
+            t.target_id = #{projectTaskId,jdbcType=VARCHAR} AND (t.status = '0' OR t.status = '1') AND t.task_type = 12  AND t.param4 = '0'
+    </select>
+</mapper>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:replace="common::header(~{::title},~{::link})">
+    <title>卯丁后台</title>
+    <link rel="stylesheet" th:href="@{/assets/lib/webuploader/webuploader.min.css}"/>
+    <link rel="stylesheet" th:href="@{/assets/lib/icheck-1.x/skins/minimal/green.min.css}">
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
+<div class="clearfix"></div>
+<div class="page-container">
+    <th:block th:replace="common::nav"></th:block>
+
+    <div class="page-sidebar-wrapper" data-nav-id="configuration-roleViews"></div>
+
+    <div class="page-content-wrapper">
+        <div class="page-content" style="padding-top: 0;">
+            <!--<div class="m-heading-1 border-green m-bordered">
+                <h3>企业认证 - 审核</h3>
+                <p> xxxxxxx </p>
+            </div>-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light" style="overflow: hidden;">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <!--<i class="icon-paper-plane font-yellow-casablanca"></i>-->
+                                <span class="caption-subject bold font-yellow-casablanca uppercase">权限配置</span>
+                            </div>
+                            <div class="actions">
+                                <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:void(0);"> </a>
+                            </div>
+                        </div>
+                        <div class="portlet-body">
+                            <div class="col-md-3" id="role-box"></div>
+                            <div class="col-md-9" id="view-box"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="common::footer(~{::script})">
+    <script type="text/javascript" th:src="@{/assets/lib/webuploader/webuploader.min.js}"></script>
+    <script type="text/javascript" th:src="@{/assets/lib/icheck-1.x/icheck.min.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        $(function () {
+            main.init(configuration_roleViews);
+        });
+    </script>
+</th:block>
+</body>
+</html>
