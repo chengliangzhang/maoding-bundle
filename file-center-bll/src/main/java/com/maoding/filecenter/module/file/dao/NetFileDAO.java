@@ -3,6 +3,7 @@ package com.maoding.filecenter.module.file.dao;
 import com.maoding.core.base.BaseDao;
 import com.maoding.filecenter.module.file.dto.DirectoryDTO;
 import com.maoding.filecenter.module.file.dto.NetFileDTO;
+import com.maoding.filecenter.module.file.dto.NetFileQueryDTO;
 import com.maoding.filecenter.module.file.model.NetFileDO;
 import org.springframework.stereotype.Repository;
 
@@ -24,5 +25,7 @@ public interface NetFileDAO extends BaseDao<NetFileDO> {
     List<DirectoryDTO> getNetFileOrDir(DirectoryDTO dir);
 
     List<NetFileDO> getNetFileByIds(NetFileDTO dto);
+
+    List<NetFileDO> listNetFile(NetFileQueryDTO query);
 
 }

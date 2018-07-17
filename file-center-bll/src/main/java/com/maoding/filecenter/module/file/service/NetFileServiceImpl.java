@@ -13,6 +13,7 @@ import com.maoding.core.exception.DataNotFoundException;
 import com.maoding.filecenter.module.file.dao.NetFileDAO;
 import com.maoding.filecenter.module.file.dto.DeleteDTO;
 import com.maoding.filecenter.module.file.dto.DirectoryDTO;
+import com.maoding.filecenter.module.file.dto.NetFileQueryDTO;
 import com.maoding.filecenter.module.file.dto.NetFileRenameDTO;
 import com.maoding.filecenter.module.file.model.NetFileDO;
 import com.maoding.utils.StringUtils;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
@@ -111,7 +113,17 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
     @Override
     public ApiResult uploadFile(HttpServletRequest request) throws Exception {
         MultipartFileParam param = MultipartFileParam.parse(request);
-        //return ApiResult.failed("超出容量",FastdfsUploadResult.parse(param,null,null));
+
+        //在创建新文件（id为空)时，检查文件是否存在同名
+        if (StringUtils.isEmpty(param.getId())){
+            String pid = (String) param.getParam().get("pid");
+            String name = param.getFileName();
+            NetFileDO file = getChildByPidAndName(pid,name);
+            if (file != null){
+                return ApiResult.failed("存在重名文件", file.getId());
+            }
+        }
+
         long startTime = System.currentTimeMillis();
         log.info("开始时间====" + startTime);
         FastdfsUploadResult fuResult = fastdfsService.upload(param);
@@ -168,6 +180,16 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
         }
         return ApiResult.failed(null, null);
     }
+
+    //根据名称查找子目录
+    private NetFileDO getChildByPidAndName(String parentId,String childName) {
+        NetFileQueryDTO query = new NetFileQueryDTO();
+        query.setPid(parentId);
+        query.setFileName(childName);
+        List<NetFileDO> nodeList = netFileDAO.listNetFile(query);
+        return (!ObjectUtils.isEmpty(nodeList)) ? nodeList.get(0) : null;
+    }
+
 
     /** 判断传入的文件是否临时文件 */
     private boolean isTempFile(MultipartFileParam param){

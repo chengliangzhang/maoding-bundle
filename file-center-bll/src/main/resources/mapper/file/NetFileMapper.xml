@@ -34,6 +34,26 @@
         </if>
     </select>
 
+    <select id="listNetFile" parameterType="com.maoding.filecenter.module.file.dto.NetFileQueryDTO"
+            resultType="com.maoding.filecenter.module.file.model.NetFileDO">
+        SELECT t.*
+        FROM maoding_web_project_sky_drive t
+        WHERE 1=1
+        <if test="pid != null">
+            <choose>
+                <when test="pid != '-'.toString()">
+                    AND pid=#{pid}
+                </when>
+                <otherwise>
+                    AND pid is NULL
+                </otherwise>
+            </choose>
+        </if>
+        <if test="fileName!=null">
+            AND file_name = #{fileName}
+        </if>
+    </select>
+
 
     <select id="getNetFileByIds" parameterType="com.maoding.filecenter.module.file.dto.NetFileDTO"
             resultType="com.maoding.filecenter.module.file.model.NetFileDO">

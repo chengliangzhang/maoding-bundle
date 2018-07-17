@@ -17,8 +17,9 @@ import java.util.Map;
  * Created by Wuwq on 2016/12/18.
  */
 public class MultipartFileParam {
-    //该请求是否是multipart
-    /*private boolean isMultipart;*/
+    /** 文件编号 */
+    private String id;
+
     /**
      * 任务ID
      */
@@ -74,6 +75,15 @@ public class MultipartFileParam {
      */
     private HashMap<String, Object> param = new HashMap<>();
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     /**
      * 在HttpServletRequest中获取分段上传文件请求的信息
      */
@@ -105,6 +115,10 @@ public class MultipartFileParam {
             String fieldName = fileItem.getFieldName();
 
             switch (fieldName) {
+                case "id":
+                    param.setId(fileItem.getString());
+                    break;
+
                 case "uploadId":
                     param.setUploadId(fileItem.getString());
                     break;
