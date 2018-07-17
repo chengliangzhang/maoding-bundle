@@ -115,7 +115,7 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
         MultipartFileParam param = MultipartFileParam.parse(request);
 
         //在创建新文件（id为空)时，检查文件是否存在同名
-        if (StringUtils.isEmpty(param.getId())){
+        if (StringUtils.isEmpty(getIdFromParam(param))){
             String pid = (String) param.getParam().get("pid");
             String name = param.getFileName();
             NetFileDO file = getChildByPidAndName(pid,name);
@@ -167,7 +167,13 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
         //根据PID重置IDPath
         resetSkyDrivePath(netFileDO);
 
-        if (netFileDAO.insert(netFileDO) > 0) {
+        int n;
+        if (getIdFromParam(param) != null) {
+            n = netFileDAO.updateByPrimaryKey(netFileDO);
+        } else {
+            n = netFileDAO.insert(netFileDO);
+        }
+        if (n > 0) {
             //计算剩余空间
             long endTime = System.currentTimeMillis();    //获取结束时间
             log.info("结束时间====" + endTime);

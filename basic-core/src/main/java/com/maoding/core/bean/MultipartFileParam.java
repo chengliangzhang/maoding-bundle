@@ -117,6 +117,7 @@ public class MultipartFileParam {
             switch (fieldName) {
                 case "id":
                     param.setId(fileItem.getString());
+                    param.setUploadId(fileItem.getString());
                     break;
 
                 case "uploadId":
