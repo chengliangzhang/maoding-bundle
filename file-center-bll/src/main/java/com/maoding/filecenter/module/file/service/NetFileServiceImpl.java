@@ -120,7 +120,9 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
             String name = param.getFileName();
             NetFileDO file = getChildByPidAndName(pid,name);
             if (file != null){
-                return ApiResult.failed("存在重名文件", file.getId());
+                FastdfsUploadResult errorResult = new FastdfsUploadResult();
+                errorResult.setNetFileId(file.getId());
+                return ApiResult.failed("存在重名文件", errorResult);
             }
         }
 
