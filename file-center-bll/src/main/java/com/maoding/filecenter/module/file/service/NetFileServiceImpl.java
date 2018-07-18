@@ -109,7 +109,7 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
 
     //判断文件是否可写，如果操作者和文件创建者相同则可写，否则不可写
     private boolean isWritable(NetFileDO file, String accountId){
-        return (!StringUtils.isNotEmpty(accountId)
+        return (StringUtils.isNotEmpty(accountId)
                 && ((accountId.equals(file.getCreateBy())) || StringUtils.isEmpty(file.getCreateBy())));
     }
 
