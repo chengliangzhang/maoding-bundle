@@ -33,6 +33,16 @@ public class FastdfsUploadResult {
     private Integer netFileSeq;
 
     private String fileFullPath;
+    /** 是否可以覆盖 */
+    private String isWritable;
+
+    public String getIsWritable() {
+        return isWritable;
+    }
+
+    public void setIsWritable(String isWritable) {
+        this.isWritable = isWritable;
+    }
 
     public static FastdfsUploadResult parse(MultipartFileParam param, String group, String path) {
         FastdfsUploadResult r = new FastdfsUploadResult();

@@ -107,6 +107,17 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
         return ApiResult.failed(null, null);
     }
 
+    //判断文件是否可写，如果操作者和文件创建者相同则可写，否则不可写
+    private boolean isWritable(NetFileDO file, String accountId){
+        return (!StringUtils.isNotEmpty(accountId)
+                && ((accountId.equals(file.getCreateBy())) || StringUtils.isEmpty(file.getCreateBy())));
+    }
+
+    //转换布尔值为字符串，0-false,1-true
+    private String toString(boolean b){
+        return b ? "1" : "0";
+    }
+
     /**
      * 上传文件
      */
@@ -120,8 +131,10 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
             String name = param.getFileName();
             NetFileDO file = getChildByPidAndName(pid,name);
             if (file != null){
+                String accountId = (String) param.getParam().get("accountId");
                 FastdfsUploadResult errorResult = new FastdfsUploadResult();
                 errorResult.setNetFileId(file.getId());
+                errorResult.setIsWritable(toString(isWritable(file,accountId)));
                 return ApiResult.failed("存在重名文件", errorResult);
             }
         }
