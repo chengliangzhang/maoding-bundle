@@ -188,11 +188,10 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
         } else {
             n = netFileDAO.insert(netFileDO);
         }
-        if (n > 0) {
+        if (n >= 0) {
             //计算剩余空间
             long endTime = System.currentTimeMillis();    //获取结束时间
             log.info("结束时间====" + endTime);
-//            log.info("最后一次用时=====" + (endTime - startTime) + "ms");
             log.info("文件大小====" + (fuResult.getFileSize()) + "b");
             companyDiskService.recalcSizeOnFileAdded(companyId, FileSizeSumType.DOCMGR, fuResult.getFileSize());
             //添加项目动态
@@ -228,7 +227,10 @@ public class NetFileServiceImpl extends BaseService implements NetFileService {
     }
 
     private String getIdFromParam(MultipartFileParam param){
-        return ((param != null) && (param.getUploadId() != null)) ? param.getUploadId() : null;
+        return ((param != null) &&
+                (param.getId() != null) &&
+                (!param.getId().contains("WU_FILE_"))
+                ) ? param.getId() : null;
     }
 
     /**
