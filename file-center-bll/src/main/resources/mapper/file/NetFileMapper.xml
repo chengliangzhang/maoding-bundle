@@ -38,7 +38,7 @@
             resultType="com.maoding.filecenter.module.file.model.NetFileDO">
         SELECT t.*
         FROM maoding_web_project_sky_drive t
-        WHERE 1=1
+        WHERE t.status = 0
         <if test="pid != null">
             <choose>
                 <when test="pid != '-'.toString()">
@@ -52,6 +52,7 @@
         <if test="fileName!=null">
             AND file_name = #{fileName}
         </if>
+
     </select>
 
 
