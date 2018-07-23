@@ -69,7 +69,6 @@ public class BaseEntity {
         resetCreateDate();
         resetUpdateDate();
     }
-
     /** 重置主键Id为新的UUID */
     public void resetId() {
         this.id = UUID.randomUUID().toString().replaceAll("-", "");
