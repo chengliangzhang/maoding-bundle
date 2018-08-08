@@ -17,14 +17,6 @@ public class DigitUtils {
     private static final double LIMIT_0 = 0.0000001; //归零值
 
     /**
-     * 描述      比较两个数值是否相同
-     * 日期      2018/7/31
-     * @author  张成亮
-     * @return  如果数值差别小于误差值，返回真，否则返回假
-     * @param   num1 第一个数值
-     * @param   num2 第二个数值
-     **/
-    /**
      * @author  张成亮
      * @date    2018/7/31
      * @description     比较两个数值是否相同
