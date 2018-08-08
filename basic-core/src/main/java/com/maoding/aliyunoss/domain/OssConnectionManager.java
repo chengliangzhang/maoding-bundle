@@ -2,17 +2,14 @@ package com.maoding.aliyunoss.domain;
 
 import com.aliyun.oss.ClientConfiguration;
 import com.aliyun.oss.OSSClient;
-import com.maoding.aliyunoss.AliyunossClientConstants;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 /**
  * Created by sandy on 2017/10/20.
  */
-@Component
-@ConfigurationProperties(prefix = AliyunossClientConstants.ROOT_CONFIG_PREFIX_OSS)
+//@Component
+//@ConfigurationProperties(prefix = AliyunossClientConstants.ROOT_CONFIG_PREFIX_OSS)
 public class OssConnectionManager{
 
     private static String endpoint;

@@ -888,4 +888,22 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <!-- 所有模块都需要依赖的库，例如core模块用到的库 -->
+    <dependencies>
+        <!-- kryo -->
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
