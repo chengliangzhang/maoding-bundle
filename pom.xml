@@ -31,7 +31,7 @@
         <repository>
             <id>nexus</id>
             <name>maven-public</name>
-            <url>http://172.16.6.51:8081/repository/maven-public</url>
+            <url>http://192.168.1.253:8081/repository/maven-public</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
@@ -49,7 +49,7 @@
         <pluginRepository>
             <id>nexus</id>
             <name>maven-public</name>
-            <url>http://172.16.6.51:8081/repository/maven-public</url>
+            <url>http://192.168.1.253:8081/repository/maven-public</url>
             <layout>default</layout>
             <releases>
                 <enabled>true</enabled>
