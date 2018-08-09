@@ -9,4 +9,5 @@ webapp/
 *.7z*
 *.rar*
 *.orig*
+*.log
 upload_test*.*
