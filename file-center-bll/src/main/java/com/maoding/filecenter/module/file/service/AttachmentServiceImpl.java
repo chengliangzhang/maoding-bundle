@@ -18,7 +18,8 @@ import com.maoding.filecenter.module.file.model.NetFileCrtDO;
 import com.maoding.filecenter.module.file.model.NetFileDO;
 import com.maoding.filecenter.module.im.dao.ImGroupDAO;
 import com.maoding.filecenter.module.im.dto.GroupImgUpdateDTO;
-import com.mysql.jdbc.StringUtils;
+import com.maoding.utils.StringUtils;
+import com.maoding.utils.TraceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -454,6 +455,76 @@ public class AttachmentServiceImpl extends BaseService implements AttachmentServ
         }
 
         return ApiResult.failed(null, null);
+    }
+
+    /**
+     * 描述       上传收付款计划附件
+     * 日期       2018/8/9
+     *
+     * @param request
+     * @author 张成亮
+     */
+    @Override
+    public FastdfsUploadResult uploadCostPlanAttach(HttpServletRequest request) throws Exception {
+        MultipartFileParam param = MultipartFileParam.parse(request);
+        return realUploadFile(param,NetFileType.FILE_TYPE_COST_PLAN_ATTACH);
+    }
+
+    //保存类型为type的文件到文档库中
+    private FastdfsUploadResult realUploadFile(MultipartFileParam param, Integer fileType) throws Exception{
+        TraceUtils.check(param != null);
+
+        String companyId = (String) param.getParam().get("companyId");
+        String accountId = (String) param.getParam().get("accountId");
+        String projectId = (String) param.getParam().get("projectId");
+        Boolean replacePrev = (Boolean) param.getParam().get("replacePrev");
+
+        TraceUtils.check(StringUtils.isNotEmpty(companyId),log,"!组织ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(accountId),log,"!账号ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(projectId),log,"!项目ID不能为空");
+
+        FastdfsUploadResult fuResult = fastdfsService.upload(param);
+        if (fuResult.getNeedFlow()) {
+            return fuResult;
+        }
+
+        /** 只在明确覆盖时删除之前的文件，保留多个文件 */
+        if ((replacePrev != null) && (replacePrev == true)) {
+            Example selectExample = new Example(NetFileDO.class);
+            selectExample.createCriteria()
+                    .andCondition("company_id = ", companyId)
+                    .andCondition("project_id = ", projectId)
+                    .andCondition("type = ", fileType)
+                    .andCondition("status = ", NetFileStatus.Normal)
+                    .andCondition("file_name = ",fuResult.getFileName());
+
+            List<NetFileDO> oldAttachs = netFileDAO.selectByExample(selectExample);
+            if (oldAttachs != null && oldAttachs.size() > 0) {
+                //累计扣减空间
+                long subFileSize = 0L;
+                for (NetFileDO oa : oldAttachs) {
+                    oa.setStatus(NetFileStatus.Deleted.toString());
+                    oa.setUpdateBy(accountId);
+                    oa.setUpdateDate(LocalDateTime.now());
+                    if (netFileDAO.updateByPrimaryKey(oa) > 0) {
+                        subFileSize += oa.getFileSize();
+                    }
+                }
+                //计算剩余空间
+                if (subFileSize > 0L)
+                    companyDiskService.recalcSizeOnFileRemoved(companyId, FileSizeSumType.OTHER, subFileSize);
+            }
+        }
+
+        //插入新记录
+        ApiResult ar = saveNewNetFile(companyId, accountId, projectId, NetFileType.PROJECT_CONTRACT_ATTACH, null, null,null, fuResult);
+        if (ar.isSuccessful()) {
+            //计算剩余空间
+            companyDiskService.recalcSizeOnFileAdded(companyId, FileSizeSumType.OTHER, fuResult.getFileSize());
+            return fuResult;
+        }
+
+        return null;
     }
 
     @Override

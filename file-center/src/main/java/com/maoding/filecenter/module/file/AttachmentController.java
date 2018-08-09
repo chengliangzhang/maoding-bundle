@@ -1,6 +1,7 @@
 package com.maoding.filecenter.module.file;
 
 import com.maoding.core.bean.ApiResult;
+import com.maoding.core.bean.FastdfsUploadResult;
 import com.maoding.filecenter.module.file.dto.*;
 import com.maoding.filecenter.module.file.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,23 @@ public class AttachmentController {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    /**
+     * 描述       上传收付款计划附件
+     * 日期       2018/8/9
+     * @author   张成亮
+     **/
+    @RequestMapping(value = "/uploadCostPlanAttach", method = RequestMethod.POST)
+    @ResponseBody
+    public ApiResult uploadCostPlanAttach(HttpServletRequest request) throws Exception {
+        FastdfsUploadResult result = attachmentService.uploadCostPlanAttach(request);
+        if (request != null){
+            return ApiResult.success("上传成功",result);
+        } else {
+            return ApiResult.failed("上传失败");
+        }
+    }
+
 
     /**
      * 上传项目合同扫描件

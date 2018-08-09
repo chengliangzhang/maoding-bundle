@@ -1,6 +1,7 @@
 package com.maoding.filecenter.module.file.service;
 
 import com.maoding.core.bean.ApiResult;
+import com.maoding.core.bean.FastdfsUploadResult;
 import com.maoding.filecenter.module.file.dto.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,13 @@ public interface AttachmentService {
      * 上传项目合同扫描件
      */
     ApiResult uploadProjectContract(HttpServletRequest request) throws Exception;
+
+    /**
+     * 描述       上传收付款计划附件
+     * 日期       2018/8/9
+     * @author   张成亮
+     **/
+    FastdfsUploadResult uploadCostPlanAttach(HttpServletRequest request) throws Exception;
 
     /**
      * 上传项目合同扫描件

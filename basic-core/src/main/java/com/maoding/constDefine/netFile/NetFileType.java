@@ -97,6 +97,11 @@ public class NetFileType {
     public static final Integer DIRECTORY_SEND_ARCHIVE_NOTICE = 50;
 
     /**
+     * 收付款计划附件
+     */
+    public static final Integer FILE_TYPE_COST_PLAN_ATTACH = 70;
+
+    /**
      * 100：个人(文件夹)
      */
     public static final Integer DIRECTORY_PERSONALLY = 100;

@@ -46,6 +46,14 @@ public class GlobalExceptionHandler {
         return ApiResult.failed("参数验证失败（#02）：" + errorMsg.toString(), null);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public ApiResult illegalArgumentExceptionHandler(HttpServletRequest req, IllegalArgumentException ex) throws Exception {
+        return ApiResult.error("参数错误:" + ex.getMessage(), null);
+    }
+
+
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
