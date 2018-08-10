@@ -4,10 +4,13 @@ package com.maoding.utils;
  * Created by Wuwq on 2017/1/3.
  */
 
+import com.maoding.core.bean.ApiResult;
 import okhttp3.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
+import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -160,5 +163,51 @@ public class OkHttpUtils {
 
         for (Call call : httpClient.dispatcher().runningCalls())
             call.cancel();
+    }
+
+    /**
+     * 描述     使用post连接发送数据并等待返回
+     * 日期     2018/8/9
+     * @author  张成亮
+     * @return  服务返回信息
+     * @param   url 服务地址
+     * @param   data 调用参数
+     **/
+    public static <T> ApiResult<?> postData(@NotNull String url,T data) {
+        return null;
+    }
+
+    /**
+     * 描述     使用post连接发送数据,不等待返回数据
+     * 日期     2018/8/9
+     * @author  张成亮
+     * @param   url 服务地址
+     * @param   data 调用参数
+     **/
+    public static <T> void postDataAsyn(@NotNull String url,T data) {
+    }
+
+    /**
+     * 描述     发送文件，等待返回
+     * 日期     2018/8/9
+     * @author  张成亮
+     * @return  服务返回信息
+     * @param   url 服务地址
+     * @param   file 要发送的文件
+     * @param   pos 起始地址
+     * @param   size 数据尺寸
+     * @param   data 其他数据
+     **/
+    public static <T> ApiResult<?> postData(@NotNull String url,File file,long pos,int size,T data) {
+        return null;
+    }
+
+    /**
+     * 描述       等待服务返回
+     * 日期       2018/8/9
+     * @author   张成亮
+     **/
+    private static ApiResult<?> waiting(@NotNull String url){
+        return null;
     }
 }

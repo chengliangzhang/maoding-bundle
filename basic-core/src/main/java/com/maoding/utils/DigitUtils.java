@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * 日    期 : 2017/11/9 9:41
  * 描    述 : 数值的判断、比较、转换
  */
-public class DigitUtils {
+public class DigitUtils extends org.apache.commons.lang3.math.NumberUtils {
     /** 日志对象 */
     private static final Logger log = LoggerFactory.getLogger(DigitUtils.class);
 
