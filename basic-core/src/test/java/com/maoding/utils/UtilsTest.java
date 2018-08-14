@@ -1,4 +1,4 @@
-package com.maoding.utils; 
+package com.maoding.utils;
 
 import com.maoding.core.base.BaseEntity;
 import org.junit.Test;
@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,14 @@ public class UtilsTest {
         List<Integer> srcList = getList();
         List<Float> dstList = BeanUtils.createListFrom(srcList,Float.class);
         assert (isSame(srcList,dstList));
+
+        Map<String,Object> srcMap = getMap();
+        dst2 = BeanUtils.createFrom(srcMap,TestClass2.class);
+        assert (isSame(dst2,srcMap));
+
+        String s = "1,2,3";
+        dstList = BeanUtils.createListFrom(s,Float.class);
+        assert (dstList.size() == 3);
     }
 
     private List<Integer> getList() throws Exception {
@@ -87,6 +96,15 @@ public class UtilsTest {
         src.setEntity(new BaseEntity());
         src.setList(new ArrayList<>());
         src.getList().add(1);
+        return src;
+    }
+
+    private Map<String,Object> getMap() throws Exception {
+        Map<String,Object> src = new HashMap<>();
+        src.put("Digital",3);
+        src.put("unknown",3);
+        src.put("Array","1,2,3");
+        src.put("List","2,3,4");
         return src;
     }
 

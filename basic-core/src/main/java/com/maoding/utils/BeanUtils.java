@@ -28,6 +28,8 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
     private static final String SET = "set";
     /** 点分隔符 */
     private static final String DOT = ".";
+    /** 逗号分隔符 */
+    private static final String COMMA = ".";
     /** 默认关键字属性 */
     private static final String DEFAULT_KEY_NAME = "Id";
 
@@ -184,9 +186,11 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
                 if (val != null) {
                     String setKey = output.getClass().getName() + DOT + SET + StringUtils.capitalize(k.toString());
                     Integer setIndex = methodIndexMap.get(setKey);
-                    assert (outputParameterTypes != null);
-                    Class<?> outputFieldClass = outputParameterTypes[setIndex][0];
-                    callSetMethod(outputMethodAccess,output,setIndex,outputFieldClass,val,isClean);
+                    if (setIndex != null) {
+                        assert (outputParameterTypes != null);
+                        Class<?> outputFieldClass = outputParameterTypes[setIndex][0];
+                        callSetMethod(outputMethodAccess, output, setIndex, outputFieldClass, val, isClean);
+                    }
                 }
             }
         }
@@ -362,8 +366,10 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
             if (input.getClass().isArray() && elementClass.isAssignableFrom(input.getClass().getComponentType())) {
                 return outputClass.cast((isClean) ? cleanProperties(input) : input);
             } else {
-                return outputClass.cast(createArrayObjectFrom(input, outputClass.getComponentType(),isClean));
+                return outputClass.cast(createArrayObjectFrom(input, outputClass.getComponentType(), isClean));
             }
+        } else if (outputClass.isAssignableFrom(List.class)) {
+            return outputClass.cast(createListFrom(input,Object.class,isClean));
         } else if (input instanceof Map) {
             D output = constructNull(outputClass);
             copyProperties(input, output, isClean);
@@ -402,12 +408,13 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
         assert (elementClass != null) && (!elementClass.isPrimitive());
         List<D> outputList = null;
         if (input != null) {
-            outputList = new ArrayList<>();
             if (input.getClass().isArray()) {
+                outputList = new ArrayList<>();
                 for (int i = 0; i < Array.getLength(input); i++) {
                     outputList.add(createFrom(Array.get(input,i),elementClass,isClean));
                 }
             } else if (input instanceof List) {
+                outputList = new ArrayList<>();
                 List<?> inputList = (List<?>) input;
                 for (Object inputElement : inputList) {
                     if (inputElement == null) continue;
@@ -417,16 +424,20 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
                         outputList.add(createFrom(inputElement,elementClass,isClean));
                     }
                 }
+            } else if (elementClass.isInstance(input)) {
+                outputList = new ArrayList<>();
+                outputList.add(elementClass.cast((isClean) ? cleanProperties(input) : input));
+            } else if ((input instanceof String) && (((String) input).contains(","))) {
+                String[] inputArray = ((String) input).split(",");
+                outputList = createListFrom(inputArray, elementClass);
             } else {
-                if (elementClass.isInstance(input)) {
-                    outputList.add(elementClass.cast((isClean) ? cleanProperties(input) : input));
-                } else {
-                    outputList.add(createFrom(input,elementClass,isClean));
-                }
+                outputList = new ArrayList<>();
+                outputList.add(createFrom(input,elementClass,isClean));
             }
         }
         return outputList;
     }
+
 
     /**
      * 描述     根据某输入对象创建元素类型为elementClass的输出对象序列
@@ -463,13 +474,15 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
                 for (int i=0; i<Array.getLength(input); i++){
                     outputArray[i] = createFrom(Array.get(input,i),elementClass,isClean);
                 }
+            } else if (elementClass.isInstance(input)) {
+                outputArray = (D[]) Array.newInstance(elementClass, 1);
+                outputArray[0] = elementClass.cast((isClean) ? cleanProperties(input) : input);
+            } else if ((input instanceof String) && ((String) input).contains(COMMA)) {
+                String[] inputArray = ((String) input).split(COMMA);
+                outputArray = createArrayFrom(inputArray, elementClass, isClean);
             } else {
-                outputArray = (D[])Array.newInstance(elementClass,1);
-                if (elementClass.isInstance(input)) {
-                    outputArray[0] = elementClass.cast((isClean) ? cleanProperties(input) : input);
-                } else {
-                    outputArray[0] = createFrom(input,elementClass,isClean);
-                }
+                outputArray = (D[]) Array.newInstance(elementClass, 1);
+                outputArray[0] = createFrom(input,elementClass,isClean);
             }
         }
         return outputArray;
@@ -877,5 +890,9 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
             destList.add(dest);
         }
         return destList;
+    }
+
+    public static <T> String getId(T obj){
+        return getProperty(obj,DEFAULT_KEY_NAME,String.class,false);
     }
 }
