@@ -8,26 +8,48 @@ import com.maoding.core.bean.ApiResult;
 import okhttp3.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.client.OkHttpClientHttpRequestFactory;
 
+import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class OkHttpUtils {
+public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
+    /** 日志对象 */
+    private static final Logger log = LoggerFactory.getLogger(OkHttpUtils.class);
+
+    private static final String DEFAULT_MEDIA_TYPE = "application/json; charset=utf-8";
+
+    //调用者在堆栈中的位置
+    private static final int posStack = 3;
 
     private static final int CONNECTION_TIME_OUT = 20;
     private static final int READ_TIME_OUT = 30;
     private static final int WRITE_TIME_OUT = 30;
 
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder()
+    private static OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(CONNECTION_TIME_OUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIME_OUT, TimeUnit.SECONDS)
             .build();
 
     private static final String CHARSET_NAME = "UTF-8";
+
+    private static OkHttpClient getHttpClient(){
+        if (httpClient == null){
+            httpClient = new OkHttpClient.Builder()
+                    .connectTimeout(CONNECTION_TIME_OUT, TimeUnit.SECONDS)
+                    .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
+                    .writeTimeout(WRITE_TIME_OUT, TimeUnit.SECONDS)
+                    .build();
+        }
+        return httpClient;
+    }
 
     /**
      * 同步请求
@@ -166,6 +188,26 @@ public class OkHttpUtils {
     }
 
     /**
+     * 描述     默认的响应处理
+     * 日期     2018/8/14
+     * @author  张成亮
+     * @return  响应处理对象
+     **/
+    public static Callback getDefaultCallback(){
+        return new Callback() {
+            @Override
+            public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
+                TraceUtils.enter(log,call,e);
+            }
+
+            @Override
+            public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
+                TraceUtils.enter(log,call,response);
+            }
+        };
+    }
+
+    /**
      * 描述     使用post连接发送数据并等待返回
      * 日期     2018/8/9
      * @author  张成亮
@@ -173,8 +215,72 @@ public class OkHttpUtils {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> ApiResult<?> postData(@NotNull String url,T data) {
-        return null;
+    public static <T> Object postData(@NotNull String url,T data) {
+        //创建申请对象
+        Request request = createPostRequest(url,data);
+        //同步调用
+        Object result;
+        try {
+            //发出申请
+            Response response = getHttpClient().newCall(request)
+                    .execute();
+
+            //获取返回值
+            result = getData(response);
+        } catch (IOException e) {
+            String logMessage = getErrorMessage(url) + ":" + getCaller();
+            String showMessage = getErrorMessage(url);
+
+            if (StringUtils.isNotEmpty(e.getMessage())) {
+                logMessage += ":" + e.getMessage();
+                showMessage += ":" + e.getMessage();
+            }
+            log.warn(logMessage);
+            throw new UnsupportedOperationException(showMessage);
+        }
+
+        return result;
+    }
+
+    //从返回值内解析出实际包含的数据
+    private static Object getData(Response response) throws IOException {
+        //获取返回值
+        if (response == null || !response.isSuccessful()){
+            throw new IOException();
+        }
+
+        //获取返回值内的实际对象
+        Object result = null;
+        ResponseBody body = response.body();
+        if (body != null){
+            ApiResult<?> apiResult = null;
+            try {
+                apiResult = JsonUtils.json2pojo(body.string(), ApiResult.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //如果调用结果正常，返回结果，否则报告出现异常
+            if (apiResult != null) {
+                if (apiResult.isSuccessful()) {
+                    result = apiResult.getData();
+                } else {
+                    throw new IOException(apiResult.getMsg());
+                }
+            }
+        }
+
+        return result;
+    }
+
+    //获取错误字符串
+    private static String getErrorMessage(@NotNull String url){
+        return "访问" + url + "时出现错误";
+    }
+
+    //获取调用者位置字符串
+    private static String getCaller(){
+        return StringUtils.getCaller(OkHttpUtils.class.getName());
     }
 
     /**
@@ -184,7 +290,23 @@ public class OkHttpUtils {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> void postDataAsyn(@NotNull String url,T data) {
+    public static <T> void postDataAsyn(@NotNull String url,T data,Callback callback) {
+        //创建申请对象
+        Request request = createPostRequest(url,data);
+        //异步调用
+        getHttpClient().newCall(request)
+                .enqueue((callback != null) ? callback : getDefaultCallback());
+    }
+
+    //创建申请对象
+    private static <T> Request createPostRequest(@NotNull String url, T data){
+        String json = StringUtils.toJsonString(data);
+        MediaType mediaType = MediaType.parse(DEFAULT_MEDIA_TYPE);
+        RequestBody body = RequestBody.create(mediaType, json);
+        return new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
     }
 
     /**

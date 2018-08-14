@@ -28,10 +28,7 @@ public class TraceUtils {
 
     //参数检查错误前导字符
     private static String prefixIllegalArgumentMessage = "!";
-    private static String prefixIgnoreException = "~";
 
-    //调用者在堆栈中的位置
-    private static final int posStack = 3;
     /**
      * @author  张成亮
      * @date    2018/7/31
@@ -43,7 +40,8 @@ public class TraceUtils {
     public static long enter(Logger log, Object... obs){
         if (isLogEnterAndExitInfo) {
             String prefixEnter = "\t===>>>\t进入";
-            log.info(prefixEnter + Thread.currentThread().getStackTrace()[posStack].getMethodName() + ":" + getJsonString(obs));
+            log.info(prefixEnter + StringUtils.getCaller(TraceUtils.class.getName())
+                    + ":" + getJsonString(obs));
         }
         return System.currentTimeMillis();
     }
@@ -59,7 +57,7 @@ public class TraceUtils {
     public static void exit(Logger log, long t, Object... obs){
         if (isLogEnterAndExitInfo) {
             String prefixExit = "\t===>>>\t退出";
-            log.info(prefixExit + Thread.currentThread().getStackTrace()[posStack].getMethodName()
+            log.info(prefixExit + StringUtils.getCaller(TraceUtils.class.getName())
                     + ":" + (System.currentTimeMillis() - t) + "ms," + getJsonString(obs));
         }
     }
@@ -93,8 +91,7 @@ public class TraceUtils {
     public static void check(boolean condition, Logger log, Class<? extends RuntimeException> eClass, String message) {
         if (isCheckCondition && !(condition)) {
             //生成调用位置
-            StackTraceElement element = Thread.currentThread().getStackTrace()[posStack];
-            String caller = StringUtils.lastRight(element.getClassName(),".") + "." + element.getMethodName();
+            String caller = StringUtils.getCaller(TraceUtils.class.getName());
 
             //生成异常
             RuntimeException e = null;
@@ -154,6 +151,7 @@ public class TraceUtils {
      **/
     public static void check(boolean condition, Logger log, String message) {
         if (isCheckCondition) {
+            String prefixIgnoreException = "~";
             if (StringUtils.startsWith(message, prefixIllegalArgumentMessage)) {
                 check(condition, log, IllegalArgumentException.class, message);
             } else if (StringUtils.startsWith(message, prefixIgnoreException)) {

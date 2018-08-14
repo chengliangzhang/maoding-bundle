@@ -363,4 +363,22 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return format(new StringBuilder(string), objs).toString();
     }
 
+    /**
+     * 描述     获取调用者信息，即堆栈中第一个不包含指定类名的类及方法
+     * 日期     2018/8/14
+     * @author  张成亮
+     * @return  调用者信息
+     * @param   utilsName 查找调用者信息的类的类名
+     **/
+    public static String getCaller(String utilsName){
+        String caller = "";
+        StackTraceElement[] stackArray = Thread.currentThread().getStackTrace();
+        for (int i=0; i<stackArray.length; i++){
+            if (!contains(stackArray[i].getClassName(),StringUtils.class.getName())
+                    && !contains(stackArray[i].getClassName(),utilsName)){
+                caller = lastRight(stackArray[i].getClassName(),".") + "." + stackArray[i].getMethodName();
+            }
+        }
+        return caller;
+    }
 }
