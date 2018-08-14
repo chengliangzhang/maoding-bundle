@@ -25,9 +25,6 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
 
     private static final String DEFAULT_MEDIA_TYPE = "application/json; charset=utf-8";
 
-    //调用者在堆栈中的位置
-    private static final int posStack = 3;
-
     private static final int CONNECTION_TIME_OUT = 20;
     private static final int READ_TIME_OUT = 30;
     private static final int WRITE_TIME_OUT = 30;
