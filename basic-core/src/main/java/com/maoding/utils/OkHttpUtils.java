@@ -211,7 +211,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * 描述     使用post连接发送数据并等待返回
      * 日期     2018/8/9
      * @author  张成亮
-     * @return  服务返回信息
+     * @return  服务返回信息，如果调用错误产生UnsupportedOperationException异常
      * @param   url 服务地址
      * @param   data 调用参数
      **/
@@ -235,14 +235,14 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
                 logMessage += ":" + e.getMessage();
                 showMessage += ":" + e.getMessage();
             }
-            log.warn(logMessage);
+            log.error(logMessage);
             throw new UnsupportedOperationException(showMessage);
         }
 
         return result;
     }
 
-    //从返回值内解析出实际包含的数据
+    //从返回值内解析出实际包含的数据,如果包含错误则产生IOException异常
     private static Object getData(Response response) throws IOException {
         //获取返回值
         if (response == null || !response.isSuccessful()){
