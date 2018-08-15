@@ -35,7 +35,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /** json转换器 */
     private static ObjectMapper objectMapper = null;
-    private static ObjectMapper getObjectMapper() {
+    public static ObjectMapper getObjectMapper() {
         if (objectMapper == null){
             objectMapper = new ObjectMapper();
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

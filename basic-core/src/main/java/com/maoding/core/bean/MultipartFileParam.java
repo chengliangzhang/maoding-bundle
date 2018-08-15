@@ -1,7 +1,7 @@
 package com.maoding.core.bean;
 
 import com.maoding.config.MultipartConfig;
-import com.maoding.utils.NumberUtils;
+import com.maoding.utils.DigitUtils;
 import com.maoding.utils.StringUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -133,13 +133,13 @@ public class MultipartFileParam {
                     }
                     break;
                 case "chunks":
-                    param.setChunks(NumberUtils.toInt(fileItem.getString()));
+                    param.setChunks(DigitUtils.toInt(fileItem.getString()));
                     break;
                 case "chunk":
-                    param.setChunk(NumberUtils.toInt(fileItem.getString()));
+                    param.setChunk(DigitUtils.toInt(fileItem.getString()));
                     break;
                 case "chunkPerSize":
-                    param.setChunkPerSize(NumberUtils.toLong(fileItem.getString()));
+                    param.setChunkPerSize(DigitUtils.toLong(fileItem.getString()));
                     break;
                 case "file":
                     param.setFileItem(fileItem);

@@ -1,13 +1,16 @@
 package com.maoding.utils;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -108,7 +111,6 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
                 String getKey = input.getClass().getName() + DOT + GET + field;
                 Integer getIndex = methodIndexMap.get(getKey);
                 if (getIndex != null){
-                    Object i = inputMethodAccess.invoke(input, getIndex);
                     V val = createFrom(inputMethodAccess.invoke(input, getIndex),valClass,isClean);
                     if (val != null) {
                         K key = createFrom(field,keyClass,false);
@@ -164,6 +166,45 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
     public static Map<String,Object> createCleanMapFrom(final Object input){
         return createMapFrom(input,true);
     }
+
+    /**
+     * 描述     根据Json字符串创建对象
+     * 日期     2018/7/31
+     * @author  张成亮
+     **/
+    public static <T> T createFromJson(@NotNull String input,Class<? extends T> outClass){
+        ObjectMapper mapper = StringUtils.getObjectMapper();
+        try {
+            return mapper.readValue(input, outClass);
+        } catch (IOException e) {
+            log.error(getErrorMessage(input,true));
+            throw new UnsupportedOperationException(getErrorMessage(input,false));
+        }
+    }
+
+    /**
+     * 描述     根据对象创建Json字符串
+     * 日期     2018/7/31
+     * @author  张成亮
+     **/
+    public static String createJsonFrom(@NotNull Object input){
+        return StringUtils.toJsonString(input);
+    }
+
+    //获取错误字符串
+    private static String getErrorMessage(@NotNull String json, boolean isAddCaller){
+        String msg = "转换" + json + "时出现错误";
+        if (isAddCaller){
+            msg += ":" + getCaller();
+        }
+        return msg;
+    }
+
+    //获取调用者位置字符串
+    private static String getCaller(){
+        return StringUtils.getCaller(BeanUtils.class.getName());
+    }
+
 
     /**
      * 描述     把Map内的值复制到对象的相应属性上，如果isClean为真，值为空的属性不复制

@@ -1,6 +1,7 @@
 package com.maoding.utils;
 
 import com.maoding.core.base.BaseEntity;
+import com.maoding.core.bean.CoreLoginDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringBootConfiguration;
@@ -26,6 +27,13 @@ import java.util.Map;
 @ComponentScan(basePackages = {"com.maoding"})
 
 public class UtilsTest {
+    @Test
+    public void testPostData() throws Exception {
+        Object result;
+        result = OkHttpUtils.postData("http://localhost:8080/iWork/sys/login",getLogin());
+        assert (result != null);
+    }
+
     @Test
     public void testLeftAndRight() throws Exception {
         String s;
@@ -150,5 +158,12 @@ public class UtilsTest {
             }
         }
         return b;
+    }
+
+    private CoreLoginDTO getLogin(){
+        CoreLoginDTO loginInfo = new CoreLoginDTO();
+        loginInfo.setCellphone("13680809727");
+        loginInfo.setPassword("123456");
+        return loginInfo;
     }
 }

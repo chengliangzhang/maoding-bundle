@@ -14,7 +14,6 @@ import org.springframework.http.client.OkHttpClientHttpRequestFactory;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.NotNull;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +22,9 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
     /** 日志对象 */
     private static final Logger log = LoggerFactory.getLogger(OkHttpUtils.class);
 
-    private static final String DEFAULT_MEDIA_TYPE = "application/json; charset=utf-8";
+    private static final String MEDIA_TYPE_JSON = "application/json; charset=utf-8";
+    private static final String MEDIA_TYPE_FILE = "application/octet-stream; charset=utf-8";
+    private static final String MEDIA_TYPE_DEFAULT = MEDIA_TYPE_JSON;
 
     private static final int CONNECTION_TIME_OUT = 20;
     private static final int READ_TIME_OUT = 30;
@@ -69,12 +70,12 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
     public static void enqueue(Request request) {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
 
             }
         });
@@ -212,7 +213,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> Object postData(@NotNull String url,T data) {
+    public static <T> Object postData(@NotNull String url, T data) {
         //创建申请对象
         Request request = createPostRequest(url,data);
         //同步调用
@@ -225,8 +226,8 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
             //获取返回值
             result = getData(response);
         } catch (IOException e) {
-            String logMessage = getErrorMessage(url) + ":" + getCaller();
-            String showMessage = getErrorMessage(url);
+            String logMessage = getErrorMessage(url,true);
+            String showMessage = getErrorMessage(url,false);
 
             if (StringUtils.isNotEmpty(e.getMessage())) {
                 logMessage += ":" + e.getMessage();
@@ -252,7 +253,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
         if (body != null){
             ApiResult<?> apiResult = null;
             try {
-                apiResult = JsonUtils.json2pojo(body.string(), ApiResult.class);
+                apiResult = BeanUtils.createFromJson(body.string(), ApiResult.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -271,8 +272,12 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
     }
 
     //获取错误字符串
-    private static String getErrorMessage(@NotNull String url){
-        return "访问" + url + "时出现错误";
+    private static String getErrorMessage(@NotNull String url,boolean isAddCaller){
+        String msg = "访问" + url + "时出现错误";
+        if (isAddCaller){
+            msg += ":" + getCaller();
+        }
+        return msg;
     }
 
     //获取调用者位置字符串
@@ -295,38 +300,14 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
                 .enqueue((callback != null) ? callback : getDefaultCallback());
     }
 
-    //创建申请对象
+    //创建发送JSON申请对象
     private static <T> Request createPostRequest(@NotNull String url, T data){
         String json = StringUtils.toJsonString(data);
-        MediaType mediaType = MediaType.parse(DEFAULT_MEDIA_TYPE);
+        MediaType mediaType = MediaType.parse(MEDIA_TYPE_DEFAULT);
         RequestBody body = RequestBody.create(mediaType, json);
         return new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-    }
-
-    /**
-     * 描述     发送文件，等待返回
-     * 日期     2018/8/9
-     * @author  张成亮
-     * @return  服务返回信息
-     * @param   url 服务地址
-     * @param   file 要发送的文件
-     * @param   pos 起始地址
-     * @param   size 数据尺寸
-     * @param   data 其他数据
-     **/
-    public static <T> ApiResult<?> postData(@NotNull String url,File file,long pos,int size,T data) {
-        return null;
-    }
-
-    /**
-     * 描述       等待服务返回
-     * 日期       2018/8/9
-     * @author   张成亮
-     **/
-    private static ApiResult<?> waiting(@NotNull String url){
-        return null;
     }
 }
