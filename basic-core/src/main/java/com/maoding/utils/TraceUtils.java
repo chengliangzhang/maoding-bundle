@@ -1,6 +1,7 @@
 package com.maoding.utils;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -261,5 +262,16 @@ public class TraceUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 描述     获取日志对象
+     * 日期     2018/8/16
+     * @author  张成亮
+     * @return  日志对象
+     * @param   clazz 类名
+     **/
+    public static Logger getLogger(Class<?> clazz) {
+        return LoggerFactory.getLogger(clazz);
     }
 }

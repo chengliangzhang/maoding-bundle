@@ -1,4 +1,4 @@
-package com.maoding.core.bean;
+package com.maoding.core.base;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 日    期 : 2017/9/12 19:12
  * 描    述 : 登录用户的账号及基本信息
  */
-public final class CoreLoginDTO implements Serializable{
+public class BaseLoginDTO implements Serializable{
     /** 登录用户名 **/
     private String cellphone;
 

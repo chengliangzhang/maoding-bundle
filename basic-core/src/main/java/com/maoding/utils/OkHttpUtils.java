@@ -4,6 +4,7 @@ package com.maoding.utils;
  * Created by Wuwq on 2017/1/3.
  */
 
+import com.maoding.core.base.BaseHttpCallback;
 import com.maoding.core.bean.ApiResult;
 import okhttp3.*;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -186,26 +187,6 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
     }
 
     /**
-     * 描述     默认的响应处理
-     * 日期     2018/8/14
-     * @author  张成亮
-     * @return  响应处理对象
-     **/
-    public static Callback getDefaultCallback(){
-        return new Callback() {
-            @Override
-            public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
-                TraceUtils.enter(log,call,e);
-            }
-
-            @Override
-            public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
-                TraceUtils.enter(log,call,response);
-            }
-        };
-    }
-
-    /**
      * 描述     使用post连接发送数据并等待返回
      * 日期     2018/8/9
      * @author  张成亮
@@ -213,18 +194,18 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> Object postData(@NotNull String url, T data) {
+    public static <T> ApiResult<?> postData(@NotNull String url, T data) {
         //创建申请对象
         Request request = createPostRequest(url,data);
         //同步调用
-        Object result;
+        ApiResult<?> result;
         try {
             //发出申请
             Response response = getHttpClient().newCall(request)
                     .execute();
 
             //获取返回值
-            result = getData(response);
+            result = getApiResult(response);
         } catch (IOException e) {
             String logMessage = getErrorMessage(url,true);
             String showMessage = getErrorMessage(url,false);
@@ -240,31 +221,60 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
         return result;
     }
 
-    //从返回值内解析出实际包含的数据,如果包含错误则产生IOException异常
-    private static Object getData(Response response) throws IOException {
+    /**
+     * 描述     使用post连接发送数据并等待返回
+     * 日期     2018/8/16
+     * @author  张成亮
+     * @return  服务返回信息内的data属性，如果调用错误产生UnsupportedOperationException异常
+     * @param   url 服务地址
+     * @param   data 调用参数
+     * @param   clazz 期待返回内容的类型
+     **/
+    public static <T,R> R postData(@NotNull String url, T data, @NotNull Class<? extends R> clazz) {
+        //发出申请并取得返回值
+        ApiResult<?> apiResult = postData(url,data);
+
+        //返回调用结果内的data属性
+        return getData(url,apiResult,clazz);
+    }
+
+    //从返回值解析出卯丁定义接口返回值
+    private static ApiResult<?> getApiResult(Response response) throws IOException {
         //获取返回值
         if (response == null || !response.isSuccessful()){
             throw new IOException();
         }
 
-        //获取返回值内的实际对象
-        Object result = null;
+        //获取返回值内的卯丁定义的接口返回值
+        ApiResult<?> apiResult = null;
         ResponseBody body = response.body();
-        if (body != null){
-            ApiResult<?> apiResult = null;
+        if (body != null) {
             try {
                 apiResult = BeanUtils.createFromJson(body.string(), ApiResult.class);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new IOException();
             }
+        }
+        return apiResult;
+    }
 
-            //如果调用结果正常，返回结果，否则报告出现异常
-            if (apiResult != null) {
-                if (apiResult.isSuccessful()) {
-                    result = apiResult.getData();
-                } else {
-                    throw new IOException(apiResult.getMsg());
+    //从返回值内解析出实际包含的数据,如果包含错误则产生IOException异常
+    private static <R> R getData(String url, ApiResult<?> apiResult, Class<? extends R> clazz) {
+        R result = null;
+        //如果调用结果正常，返回结果，否则报告出现异常
+        if (apiResult != null) {
+            if (apiResult.isSuccessful()) {
+                result = BeanUtils.createFrom(apiResult.getData(),clazz);
+            } else {
+                String logMessage = getErrorMessage(url,true);
+                String showMessage = getErrorMessage(url,false);
+
+                if (StringUtils.isNotEmpty(apiResult.getMsg())) {
+                    logMessage += ":" + apiResult.getMsg();
+                    showMessage += ":" + apiResult.getMsg();
                 }
+                log.error(logMessage);
+                throw new UnsupportedOperationException(showMessage);
             }
         }
 
@@ -297,7 +307,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
         Request request = createPostRequest(url,data);
         //异步调用
         getHttpClient().newCall(request)
-                .enqueue((callback != null) ? callback : getDefaultCallback());
+                .enqueue((callback != null) ? callback : new BaseHttpCallback());
     }
 
     //创建发送JSON申请对象

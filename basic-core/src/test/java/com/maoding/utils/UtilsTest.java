@@ -1,7 +1,7 @@
 package com.maoding.utils;
 
 import com.maoding.core.base.BaseEntity;
-import com.maoding.core.bean.CoreLoginDTO;
+import com.maoding.core.base.BaseLoginDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringBootConfiguration;
@@ -32,6 +32,7 @@ public class UtilsTest {
         Object result;
         result = OkHttpUtils.postData("http://localhost:8080/iWork/sys/login",getLogin());
         assert (result != null);
+        OkHttpUtils.postDataAsyn("http://localhost:8080/iWork/sys/login",getLogin(),null);
     }
 
     @Test
@@ -160,8 +161,8 @@ public class UtilsTest {
         return b;
     }
 
-    private CoreLoginDTO getLogin(){
-        CoreLoginDTO loginInfo = new CoreLoginDTO();
+    private BaseLoginDTO getLogin(){
+        BaseLoginDTO loginInfo = new BaseLoginDTO();
         loginInfo.setCellphone("13680809727");
         loginInfo.setPassword("123456");
         return loginInfo;
