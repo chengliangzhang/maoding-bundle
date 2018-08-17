@@ -1,18 +1,18 @@
 package com.maoding.core.base;
 
-import com.maoding.mybatis.mapper.BatchMapper;
 import com.maoding.utils.BeanUtils;
 import com.maoding.utils.StringUtils;
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.common.MySqlMapper;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created by Wuwq on 2016/12/14.
  * 数据库访问层接口（自带通用方法）
  */
-public interface BaseDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper<T>, MySqlMapper<T>, BatchMapper<T> {
+public interface BaseDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper<T>,MySqlMapper<T> {
     //FIXME 特别注意，该接口不能被扫描到，否则会出错
 
     /**
@@ -77,4 +77,7 @@ public interface BaseDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper<T>,
         return entity;
     }
 
+    default int BatchInsert(List<T> recordList){
+        return insertList(recordList);
+    }
 }

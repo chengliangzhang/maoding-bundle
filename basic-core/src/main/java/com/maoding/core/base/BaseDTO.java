@@ -22,6 +22,7 @@ public class BaseDTO extends BaseIdObject {
 
     /** id: 元素编号 **/
 
+    /**
      * app使用的token标示
      */
     private String token;

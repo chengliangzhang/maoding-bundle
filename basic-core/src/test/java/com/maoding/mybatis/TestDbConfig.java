@@ -1,6 +1,6 @@
 package com.maoding.mybatis;
 
-import com.maoding.config.DruidConfig;
+import com.maoding.config.CoreDruidConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -9,19 +9,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 /**
- * 深圳市卯丁技术有限公司
- * 日期: 2018/9/11
- * 类名: com.maoding.mybatis.TestDbConfig
- * 作者: 张成亮
- * 描述: 
- **/
+ * Created by Wuwq on 2016/12/13.
+ */
 @Component
 @ComponentScan
 @Configuration
 @EnableAutoConfiguration
 @ConfigurationProperties(prefix = "druid")
 @MapperScan(basePackages = "com.maoding.mybatis", sqlSessionFactoryRef = "sqlSessionFactory")
-public class TestDbConfig extends DruidConfig {
+public class TestDbConfig extends CoreDruidConfig {
     private String url;
     private String username;
     private String password;
