@@ -4,7 +4,6 @@ import com.maoding.utils.TraceUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -17,17 +16,14 @@ import java.io.IOException;
  * 描述:
  **/
 public class BaseHttpCallback implements Callback {
-    /** 日志对象 */
-    private final Logger log = TraceUtils.getLogger(this.getClass());
-
     @Override
     public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
-        TraceUtils.enter(log,call,e);
+        TraceUtils.enter(call,e);
     }
 
     @Override
     public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
-        TraceUtils.enter(log,call,response);
+        TraceUtils.enter(call,response);
     }
 
 }
