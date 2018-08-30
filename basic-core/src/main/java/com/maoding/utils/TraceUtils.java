@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 深圳市设计同道技术有限公司
@@ -30,6 +32,9 @@ public class TraceUtils {
     //参数检查错误前导字符
     private static String prefixIllegalArgumentMessage = "!";
 
+    //内部保存的日志
+    private static Map<String,Logger> loggerMap = null;
+
     /**
      * @author  张成亮
      * @date    2018/7/31
@@ -40,11 +45,18 @@ public class TraceUtils {
      **/
     public static long enter(Logger log, Object... obs){
         if (isLogEnterAndExitInfo) {
-            String prefixEnter = "\t===>>>\t进入";
-            log.info(prefixEnter + StringUtils.getCaller(TraceUtils.class.getName())
+            log.info("\t===>>>\t进入" + getCaller()
                     + ":" + getJsonString(obs));
         }
         return System.currentTimeMillis();
+    }
+
+    public static long enter(Object... obs){
+        return enter(getLogger(),obs);
+    }
+
+    public static long enter(){
+        return enter(getLogger(),(Object[]) null);
     }
 
     /**
@@ -55,12 +67,23 @@ public class TraceUtils {
      * @param   t   系统当前时间
      * @param   obs 退出方法时要打印的变量
      **/
-    public static void exit(Logger log, long t, Object... obs){
+    public static void exit(long t, Logger log, Object... obs){
         if (isLogEnterAndExitInfo) {
-            String prefixExit = "\t===>>>\t退出";
-            log.info(prefixExit + StringUtils.getCaller(TraceUtils.class.getName())
-                    + ":" + (System.currentTimeMillis() - t) + "ms," + getJsonString(obs));
+            log.info("\t===>>>\t退出" + getCaller()
+                    + ":" + ((t > 0) ? (System.currentTimeMillis() - t) + "ms," : "") + getJsonString(obs));
         }
+    }
+
+    public static void exit(long t, Object... obs){
+        exit(t,getLogger(),obs);
+    }
+
+    public static void exit(Object... obs){
+        exit(0,getLogger(),obs);
+    }
+
+    public static void exit(long t){
+        exit(t,getLogger(),(Object[]) null);
     }
 
     /**
@@ -74,10 +97,21 @@ public class TraceUtils {
      **/
     public static long info(Logger log, String message, long t, Object... obs){
         if (isLogDebugInfo) {
-            String prefixInfo = "\t===>>>\t";
-            log.info(prefixInfo + message + ":" + (System.currentTimeMillis() - t) + "ms," + getJsonString(obs));
+            log.info("\t===>>>\t" + message + ":" + ((t > 0) ? (System.currentTimeMillis() - t) + "ms," : "") + getJsonString(obs));
         }
         return System.currentTimeMillis();
+    }
+
+    public static long info(String message, long t, Object... obs){
+        return info(getLogger(),message,t,obs);
+    }
+
+    public static long info(String message, Object... obs){
+        return info(getLogger(),message,0,obs);
+    }
+
+    public static long info(String message){
+        return info(getLogger(),message,0, (Object[]) null);
     }
 
     /**
@@ -92,7 +126,7 @@ public class TraceUtils {
     public static void check(boolean condition, Logger log, Class<? extends RuntimeException> eClass, String message) {
         if (isCheckCondition && !(condition)) {
             //生成调用位置
-            String caller = StringUtils.getCaller(TraceUtils.class.getName());
+            String caller = getCaller();
 
             //生成异常
             RuntimeException e = null;
@@ -165,6 +199,10 @@ public class TraceUtils {
         }
     }
 
+    public static void check(boolean condition, String message){
+        check(condition,getLogger(),message);
+    }
+
     public static void check(boolean condition, Logger log) {
         check(condition,log,null,null);
     }
@@ -175,7 +213,7 @@ public class TraceUtils {
 
     //获取要打印的字符串
     private static String getJsonString(Object... obs){
-        return StringUtils.toJsonString(obs);
+        return StringUtils.toJsonString(obs).replaceAll("\\s","");
     }
 
     public static boolean isIsLogEnterAndExitInfo() {
@@ -272,6 +310,64 @@ public class TraceUtils {
      * @param   clazz 类名
      **/
     public static Logger getLogger(Class<?> clazz) {
-        return LoggerFactory.getLogger(clazz);
+        Logger log = null;
+        if (loggerMap != null){
+            log = loggerMap.get(clazz.getName());
+        } else {
+            loggerMap = new HashMap<>();
+        }
+
+        if (log == null){
+            log = LoggerFactory.getLogger(clazz);
+            loggerMap.put(clazz.getName(),log);
+        }
+        return log;
     }
+    public static Logger getLogger() {
+        return getLogger(getCallerClass());
+    }
+
+
+    /**
+     * 描述     获取调用者的方法名信息，即堆栈中第一个不包含指定类名的类及方法名
+     * 日期     2018/8/14
+     * @author  张成亮
+     * @return  调用者信息
+     **/
+    private static String getCaller(){
+        String caller = "";
+        StackTraceElement[] stackArray = Thread.currentThread().getStackTrace();
+        for (StackTraceElement theStack : stackArray) {
+            if (!StringUtils.contains(theStack.getClassName(), TraceUtils.class.getName())
+                    && !StringUtils.contains(theStack.getClassName(), Thread.class.getName())) {
+                caller = StringUtils.lastRight(theStack.getClassName(), ".") + "." + theStack.getMethodName();
+                break;
+            }
+        }
+        return caller;
+    }
+
+    /**
+     * 描述     获取调用者的类名信息，即堆栈中第一个不包含指定类名的类
+     * 日期     2018/8/14
+     * @author  张成亮
+     * @return  调用者信息
+     **/
+    private static Class<?> getCallerClass(){
+        Class<?> callerClass = null;
+        StackTraceElement[] stackArray = Thread.currentThread().getStackTrace();
+        for (StackTraceElement theStack : stackArray) {
+            if (!StringUtils.contains(theStack.getClassName(), TraceUtils.class.getName())
+                    && !StringUtils.contains(theStack.getClassName(), Thread.class.getName())) {
+                try {
+                    callerClass = Class.forName(theStack.getClassName());
+                    break;
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return callerClass;
+    }
+
 }
