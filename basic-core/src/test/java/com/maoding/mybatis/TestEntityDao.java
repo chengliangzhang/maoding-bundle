@@ -1,6 +1,6 @@
 package com.maoding.mybatis;
 
-import com.maoding.core.base.BaseDao;
+import com.maoding.core.base.BaseEditDao;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * 描述:
  **/
 @Repository
-public interface TestEntityDao extends BaseDao<TestEntity> {
+public interface TestEntityDao extends BaseEditDao<TestEntity> {
 }

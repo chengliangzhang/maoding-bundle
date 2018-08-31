@@ -230,6 +230,10 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
         }
     }
 
+    public static <K,V> void copyProperties(final Map<K,V> input, Object output) {
+        copyProperties(input,output,false);
+    }
+
     /**
      * 描述     把输入对象的属性复制到输出数组的元素的相应属性上
      *          如果输入对象是POJO，复制到输出数组的第一个元素上
