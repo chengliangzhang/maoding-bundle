@@ -477,11 +477,15 @@ public class AttachmentServiceImpl extends BaseService implements AttachmentServ
         String companyId = (String) param.getParam().get("companyId");
         String accountId = (String) param.getParam().get("accountId");
         String projectId = (String) param.getParam().get("projectId");
+        String targetId = null;
+        if(param.getParam().containsKey("targetId")){
+            targetId = (String) param.getParam().get("targetId");
+        }
         Boolean replacePrev = (Boolean) param.getParam().get("replacePrev");
 
-        TraceUtils.check(StringUtils.isNotEmpty(companyId),"!组织ID不能为空");
-        TraceUtils.check(StringUtils.isNotEmpty(accountId),"!账号ID不能为空");
-        TraceUtils.check(StringUtils.isNotEmpty(projectId),"!项目ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(companyId),log,"!组织ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(accountId),log,"!账号ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(projectId),log,"!项目ID不能为空");
 
         FastdfsUploadResult fuResult = fastdfsService.upload(param);
         if (fuResult.getNeedFlow()) {
@@ -517,7 +521,7 @@ public class AttachmentServiceImpl extends BaseService implements AttachmentServ
         }
 
         //插入新记录
-        ApiResult ar = saveNewNetFile(companyId, accountId, projectId, NetFileType.PROJECT_CONTRACT_ATTACH, null, null,null, fuResult);
+        ApiResult ar = saveNewNetFile(companyId, accountId, projectId, NetFileType.PROJECT_CONTRACT_ATTACH, null, targetId,null, fuResult);
         if (ar.isSuccessful()) {
             //计算剩余空间
             companyDiskService.recalcSizeOnFileAdded(companyId, FileSizeSumType.OTHER, fuResult.getFileSize());

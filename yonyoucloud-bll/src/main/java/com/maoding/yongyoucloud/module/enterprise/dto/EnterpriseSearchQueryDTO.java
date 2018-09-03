@@ -29,7 +29,7 @@ public class EnterpriseSearchQueryDTO extends BaseQueryDTO {
     }
 
     public String getName() {
-        return name;
+        return name!=null?name.trim():null;
     }
 
     public void setName(String name) {
