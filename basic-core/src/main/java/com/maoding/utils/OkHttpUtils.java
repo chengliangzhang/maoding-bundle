@@ -9,20 +9,14 @@ import com.maoding.core.bean.ApiResult;
 import okhttp3.*;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.client.OkHttpClientHttpRequestFactory;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
-    /** 日志对象 */
-    private static final Logger log = LoggerFactory.getLogger(OkHttpUtils.class);
-
     private static final String MEDIA_TYPE_JSON = "application/json; charset=utf-8";
     private static final String MEDIA_TYPE_FILE = "application/octet-stream; charset=utf-8";
     private static final String MEDIA_TYPE_DEFAULT = MEDIA_TYPE_JSON;
@@ -69,17 +63,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * 异步请求（不在意返回结果，实现空callback)
      */
     public static void enqueue(Request request) {
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
-
-            }
-        });
+        httpClient.newCall(request).enqueue(new BaseHttpCallback());
     }
 
 
@@ -194,7 +178,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> ApiResult<?> postData(@NotNull String url, T data) {
+    public static <T> ApiResult<?> postData(@Nonnull String url, T data) {
         //创建申请对象
         Request request = createPostRequest(url,data);
         //同步调用
@@ -214,7 +198,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
                 logMessage += ":" + e.getMessage();
                 showMessage += ":" + e.getMessage();
             }
-            log.error(logMessage);
+            TraceUtils.error(logMessage);
             throw new UnsupportedOperationException(showMessage);
         }
 
@@ -230,7 +214,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * @param   data 调用参数
      * @param   clazz 期待返回内容的类型
      **/
-    public static <T,R> R postData(@NotNull String url, T data, @NotNull Class<? extends R> clazz) {
+    public static <T,R> R postData(@Nonnull String url, T data, @Nonnull Class<? extends R> clazz) {
         //发出申请并取得返回值
         ApiResult<?> apiResult = postData(url,data);
 
@@ -273,7 +257,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
                     logMessage += ":" + apiResult.getMsg();
                     showMessage += ":" + apiResult.getMsg();
                 }
-                log.error(logMessage);
+                TraceUtils.error(logMessage);
                 throw new UnsupportedOperationException(showMessage);
             }
         }
@@ -282,17 +266,12 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
     }
 
     //获取错误字符串
-    private static String getErrorMessage(@NotNull String url,boolean isAddCaller){
+    private static String getErrorMessage(@Nonnull String url,boolean isAddCaller){
         String msg = "访问" + url + "时出现错误";
         if (isAddCaller){
-            msg += ":" + getCaller();
+            msg += ":" + TraceUtils.getCaller();
         }
         return msg;
-    }
-
-    //获取调用者位置字符串
-    private static String getCaller(){
-        return StringUtils.getCaller(OkHttpUtils.class.getName());
     }
 
     /**
@@ -302,7 +281,7 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
      * @param   url 服务地址
      * @param   data 调用参数
      **/
-    public static <T> void postDataAsyn(@NotNull String url,T data,Callback callback) {
+    public static <T> void postDataAsync(@Nonnull String url, T data, Callback callback) {
         //创建申请对象
         Request request = createPostRequest(url,data);
         //异步调用
@@ -310,8 +289,12 @@ public class OkHttpUtils extends OkHttpClientHttpRequestFactory {
                 .enqueue((callback != null) ? callback : new BaseHttpCallback());
     }
 
+    public static <T> void postDataAsync(@Nonnull String url, T data) {
+        postDataAsync(url,data,null);
+    }
+
     //创建发送JSON申请对象
-    private static <T> Request createPostRequest(@NotNull String url, T data){
+    private static <T> Request createPostRequest(@Nonnull String url, T data){
         String json = StringUtils.toJsonString(data);
         MediaType mediaType = MediaType.parse(MEDIA_TYPE_DEFAULT);
         RequestBody body = RequestBody.create(mediaType, json);

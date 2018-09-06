@@ -483,9 +483,9 @@ public class AttachmentServiceImpl extends BaseService implements AttachmentServ
         }
         Boolean replacePrev = (Boolean) param.getParam().get("replacePrev");
 
-        TraceUtils.check(StringUtils.isNotEmpty(companyId),log,"!组织ID不能为空");
-        TraceUtils.check(StringUtils.isNotEmpty(accountId),log,"!账号ID不能为空");
-        TraceUtils.check(StringUtils.isNotEmpty(projectId),log,"!项目ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(companyId),"!组织ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(accountId),"!账号ID不能为空");
+        TraceUtils.check(StringUtils.isNotEmpty(projectId),"!项目ID不能为空");
 
         FastdfsUploadResult fuResult = fastdfsService.upload(param);
         if (fuResult.getNeedFlow()) {

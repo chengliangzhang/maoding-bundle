@@ -32,7 +32,7 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
     /** 点分隔符 */
     private static final String DOT = ".";
     /** 逗号分隔符 */
-    private static final String COMMA = ".";
+    private static final String COMMA = ",";
     /** 默认关键字属性 */
     private static final String DEFAULT_KEY_NAME = "Id";
 
@@ -48,46 +48,45 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
      * 日期     2018/7/31
      * @author  张成亮
      **/
-    private static MethodAccess cache(Class<?> clazz) {
-        synchronized (clazz) {
-            MethodAccess methodAccess = MethodAccess.get(clazz);
-            List<Field> fieldList = new ArrayList<>();
-            List<Method> methodList = new ArrayList<>();
-            for (Class<?> c=clazz; c != Object.class; c = c.getSuperclass()){
-                Field[] fields = c.getDeclaredFields();
-                Collections.addAll(fieldList, fields);
-                Method[] methods = c.getDeclaredMethods();
-                Collections.addAll(methodList, methods);
-            }
-
-            if ((fieldList.size() > 0) && (methodList.size() > 0)) {
-                List<String> fieldNameList = new ArrayList<>(fieldList.size());
-                for (Field field : fieldList) {
-                    if (!Modifier.isStatic(field.getModifiers())) { //是否是静态的
-                        String fieldName = StringUtils.capitalize(field.getName()); // 获取属性名称
-                        String getKey = GET + fieldName;
-                        String setKey = SET + fieldName;
-                        int n = 0;
-                        for (Method method : methodList) {
-                            if (StringUtils.isSame(method.getName(),getKey) && Modifier.isPublic(method.getModifiers()) && method.getParameterCount() == 0){
-                                int getIndex = methodAccess.getIndex(getKey,0); // 获取get方法的下标
-                                methodIndexMap.put(clazz.getName() + DOT + getKey, getIndex); // 将类名get方法名，方法下标注册到map中
-                                if (++n > 2) break;
-                            } else if (StringUtils.isSame(method.getName(),setKey) && Modifier.isPublic(method.getModifiers()) && method.getParameterCount() == 1) {
-                                int setIndex = methodAccess.getIndex(setKey,method.getParameterTypes()); // 获取set方法的下标
-                                methodIndexMap.put(clazz.getName() + DOT + setKey, setIndex); // 将类名set方法名，方法下标注册到map中
-                                if (++n > 2) break;
-                            }
-                        }
-                        fieldNameList.add(fieldName); // 将属性名称放入集合里
-                    }
-                }
-                fieldMap.put(clazz, fieldNameList); // 将类名列表放入到map中
-            }
-            assert(methodAccess != null);
-            methodMap.put(clazz, methodAccess); // 将类的方法列表放入到map中
-            return methodAccess;
+    private static synchronized MethodAccess cache(Class<?> clazz) {
+        MethodAccess methodAccess = MethodAccess.get(clazz);
+        List<Field> fieldList = new ArrayList<>();
+        List<Method> methodList = new ArrayList<>();
+        for (Class<?> c=clazz; c != Object.class; c = c.getSuperclass()){
+            Field[] fields = c.getDeclaredFields();
+            Collections.addAll(fieldList, fields);
+            Method[] methods = c.getDeclaredMethods();
+            Collections.addAll(methodList, methods);
         }
+
+        if ((fieldList.size() > 0) && (methodList.size() > 0)) {
+            List<String> fieldNameList = new ArrayList<>(fieldList.size());
+            for (Field field : fieldList) {
+                if (!Modifier.isStatic(field.getModifiers())) { //是否是静态的
+                    String fieldName = StringUtils.capitalize(field.getName()); // 获取属性名称
+                    String getKey = GET + fieldName;
+                    String setKey = SET + fieldName;
+                    int n = 0;
+                    for (Method method : methodList) {
+                        if (StringUtils.isSame(method.getName(),getKey) && Modifier.isPublic(method.getModifiers()) && method.getParameterCount() == 0){
+                            int getIndex = methodAccess.getIndex(getKey,0); // 获取get方法的下标
+                            methodIndexMap.put(clazz.getName() + DOT + getKey, getIndex); // 将类名get方法名，方法下标注册到map中
+                            if (++n > 2) break;
+                        } else if (StringUtils.isSame(method.getName(),setKey) && Modifier.isPublic(method.getModifiers()) && method.getParameterCount() == 1) {
+                            int setIndex = methodAccess.getIndex(setKey,method.getParameterTypes()); // 获取set方法的下标
+                            methodIndexMap.put(clazz.getName() + DOT + setKey, setIndex); // 将类名set方法名，方法下标注册到map中
+                            if (++n > 2) break;
+                        }
+                    }
+                    fieldNameList.add(fieldName); // 将属性名称放入集合里
+                }
+            }
+            fieldMap.put(clazz, fieldNameList); // 将类名列表放入到map中
+        }
+
+        assert(methodAccess != null);
+        methodMap.put(clazz, methodAccess); // 将类的方法列表放入到map中
+        return methodAccess;
     }
 
     /**
@@ -195,16 +194,10 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
     private static String getErrorMessage(@NotNull String json, boolean isAddCaller){
         String msg = "转换" + json + "时出现错误";
         if (isAddCaller){
-            msg += ":" + getCaller();
+            msg += ":" + TraceUtils.getCaller();
         }
         return msg;
     }
-
-    //获取调用者位置字符串
-    private static String getCaller(){
-        return StringUtils.getCaller(BeanUtils.class.getName());
-    }
-
 
     /**
      * 描述     把Map内的值复制到对象的相应属性上，如果isClean为真，值为空的属性不复制

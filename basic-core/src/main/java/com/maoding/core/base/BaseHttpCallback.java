@@ -22,12 +22,12 @@ public class BaseHttpCallback implements Callback {
 
     @Override
     public void onFailure(@Nonnull Call call, @Nonnull IOException e) {
-        TraceUtils.enter(log,call,e);
+        TraceUtils.enter(call,e);
     }
 
     @Override
     public void onResponse(@Nonnull Call call, @Nonnull Response response) throws IOException {
-        TraceUtils.enter(log,call,response);
+        TraceUtils.enter(call,response);
     }
 
 }
