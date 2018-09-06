@@ -32,7 +32,7 @@ public class UtilsTest {
         Object result;
         result = OkHttpUtils.postData("http://localhost:8080/iWork/sys/login",getLogin());
         assert (result != null);
-        OkHttpUtils.postDataAsyn("http://localhost:8080/iWork/sys/login",getLogin(),null);
+        OkHttpUtils.postDataAsync("http://localhost:8080/iWork/sys/login",getLogin(),null);
     }
 
     @Test
