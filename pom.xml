@@ -97,8 +97,8 @@
         <mybatis-spring-boot-starter.version>1.3.0</mybatis-spring-boot-starter.version>
         <mybatis.version>3.4.4</mybatis.version>
         <!-- mybatis通用Mapper -->
-        <mapper.version>3.4.3</mapper.version>
-        <mapper-spring-boot-starter.version>1.1.4</mapper-spring-boot-starter.version>
+        <mapper.version>3.4.0</mapper.version>
+        <mapper-spring-boot-starter.version>1.1.2</mapper-spring-boot-starter.version>
         <!-- typehandlers for JSR 310: Date and Time API-->
         <mybatis-typehandlers-jsr310.version>1.0.2</mybatis-typehandlers-jsr310.version>
 
