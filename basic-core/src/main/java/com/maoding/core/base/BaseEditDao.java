@@ -48,6 +48,11 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
         return entity;
     }
 
+    /**
+     * 描述       通过数据库实体类进行记录更新，如果数据库内无此记录，插入一条记录
+     * 日期       2018/9/7
+     * @author   张成亮
+     **/
     default T updateById(@NotNull T request){
         T entity = null;
         //如果entity内的id不为空,则从数据库内读取，如果为空，则新增，如果不为空，则更改
@@ -69,6 +74,11 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
         return entity;
     }
 
+    /**
+     * 描述     插入一条记录
+     * 日期     2018/9/7
+     * @author  张成亮
+     **/
     default  int insert(@NotNull T entity){
         if (StringUtils.isEmpty(entity.getId())){
             entity.initEntity();
@@ -78,6 +88,11 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
         return insertSelective(entity);
     }
 
+    /**
+     * 描述       批量插入记录
+     * 日期       2018/9/7
+     * @author   张成亮
+     **/
     default int BatchInsert(List<T> recordList){
         return insertList(recordList);
     }
