@@ -1,5 +1,6 @@
 package com.maoding.core.base;
 
+import com.maoding.utils.StringUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import tk.mybatis.mapper.entity.EntityColumn;
 import tk.mybatis.mapper.mapperhelper.EntityHelper;
@@ -7,6 +8,7 @@ import tk.mybatis.mapper.mapperhelper.MapperHelper;
 import tk.mybatis.mapper.mapperhelper.MapperTemplate;
 import tk.mybatis.mapper.mapperhelper.SqlHelper;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -33,24 +35,16 @@ public class CoreMapper extends MapperTemplate {
     /** 生成更新sql */
     private String getUpdateString(MappedStatement ms){
         final String PARAM_ENTITY_NAME = "entity";
-        final String PARAM_PATH_FIELD_NAME = "pathField";
-        final String PARAM_PATH_SPLIT_NAME = "pathSplit";
 
         //获得列名称转换对象
         final Class<?> entityClass = getEntityClass(ms);
         Set<EntityColumn> columns = EntityHelper.getColumns(entityClass);
 
-        //获取pathField和pathSplit参数
+        //获取pathField参数
         String pathField = null;
-        String pathSplit = null;
         for (EntityColumn column : columns) {
             if (isPathField(column)){
                 pathField = column.getProperty();
-            } else if (isPathSplit(column)){
-                pathSplit = column.getProperty();
-            }
-
-            if ((pathField != null) && (pathSplit != null)){
                 break;
             }
         }
@@ -64,7 +58,9 @@ public class CoreMapper extends MapperTemplate {
         sqlSet.append("<set>");
         sqlWhere.append("<where>");
         for (EntityColumn column : columns) {
-            if (!column.isUpdatable()) continue;
+            if (!column.isUpdatable()){
+                continue;
+            }
             if (isId(column)) {
                 sqlWhere.append(getIdCondition(column));
             } else {
@@ -72,42 +68,34 @@ public class CoreMapper extends MapperTemplate {
                 sqlSet.append("<if test=\"").append(PARAM_ENTITY_NAME)
                         .append(".").append(column.getProperty()).append("!=null")
                         .append("\">");
-                //t.`<c>`=#{entity.<p>},
+                //t.`<c>`=#{entity.<p>[,jdbcType=TIMESTAMP]},
                 sqlSet.append("t.`").append(column.getColumn()).append("`")
                         .append("=#{").append(PARAM_ENTITY_NAME).append(".")
-                        .append(column.getProperty()).append("}").append(",");
-                //如果此属性为path，同时更改子节点路径
-                if (PATH_FIELD_NAME.equals(column.getColumn())){
-                    //<if test="entity.path!=null and entity.path!=''.toString()">
-                    //left join <table> c on (c.path like concat(t.path,'/%')
-                    //</if>
-                    sqlTable.append("<if test=\"entity.").append(column.getProperty()).append("!=null")
-                            //本想添加 and entity<p>!=''.toString,但日期等格式的属性较难处理，暂时不添加
-//                            .append(" and entity.").append(column.getProperty()).append("!=''.toString()")
-                            .append("\">");
-                    sqlTable.append(" left join ").append(SqlHelper.getDynamicTableName(entityClass,tableName(entityClass)))
-                            .append(" c on (c.").append(PATH_FIELD_NAME).append(" like concat(t.")
-                            .append(PATH_FIELD_NAME).append(",'/%'))");
-                    sqlTable.append("</if>");
-                    //c.path=concat(#{entity.<p>},substring(c.path,char_length(t.path)+1)),
-                    sqlSet.append("c.").append(PATH_FIELD_NAME)
-                            .append("=concat(#{entity.").append(column.getProperty()).append("},substring(c.")
-                            .append(PATH_FIELD_NAME).append(",char_length(t.").append(PATH_FIELD_NAME).append(")+1)),");
+                        .append(column.getProperty());
+                if (column.getJavaType().isAssignableFrom(Date.class)){
+                    sqlSet.append(",jdbcType=TIMESTAMP");
                 }
-                if (isIgnoreNull) {
-                    //对pid做特殊处理，可以通过设置为'-'设置为空
-                    //      </when>
-                    //      <otherwise>
-                    //          t.`<c>`=null,
-                    //      </otherwise>
-                    //  </choose>
-                    if (PID_FIELD_NAME.equals(column.getColumn())) {
-                        sqlSet.append("</when>").append("<otherwise>")
-                                .append("t.`").append(column.getColumn()).append("`=null,")
-                                .append("</otherwise>").append("</choose>");
-                    }
+                sqlSet.append("}").append(",");
+                //如果是路径字段，添加路径更改SQL
+                if (StringUtils.isSame(column.getProperty(),pathField)){
+                    //<if test="entity.path != null">
+                    //  left join <table> c on (c.path like concat(t.path,'/%')
                     //</if>
-                    sqlSet.append("</if>");
+                    sqlTable.append("<if test=\"").append(PARAM_ENTITY_NAME).append(".")
+                            .append(column.getProperty()).append("!=null\">");
+                    sqlTable.append("left join ").append(SqlHelper.getDynamicTableName(entityClass,tableName(entityClass)))
+                            .append(" c on c.").append(column.getColumn()).append(" like concat(t.")
+                            .append(column.getColumn()).append(",'/%')");
+                    sqlTable.append("</if>");
+                    //c.path=concat(#{entity.path},substring(c.path,char_length(t.path)+1)),
+                    sqlSet.append("c.").append(column.getColumn())
+                            .append("=concat(#{").append(PARAM_ENTITY_NAME).append(".")
+                            .append(column.getProperty()).append("},substring(c.")
+                            .append(column.getColumn()).append(",char_length(t.")
+                            .append(column.getColumn()).append(")+1)),");
+                }
+                //</if>
+                sqlSet.append("</if>");
             }
         }
         sqlSet.append("</set>");
@@ -223,27 +211,7 @@ public class CoreMapper extends MapperTemplate {
         return "id".equals(column.getColumn());
     }
 
-    private boolean isId(EntityColumn column){
-        return "id".equals(column.getColumn());
-    }
-
-    private boolean isId(EntityColumn column){
-        return "id".equals(column.getColumn());
-    }
-
-    private boolean isLastModifyUserId(EntityColumn column){
-        return "last_modify_user_id".equals(column.getColumn());
-    }
-
-    private boolean isLastModifyRoleId(EntityColumn column){
-        return "last_modify_role_id".equals(column.getColumn());
-    }
-
-    private boolean isLastModifyTime(EntityColumn column){
-        return "last_modify_time".equals(column.getColumn());
-    }
-
-    private boolean isDeleted(EntityColumn column){
-        return "deleted".equals(column.getColumn());
+    private boolean isPathField(EntityColumn column){
+        return "pathField".equals(column.getColumn());
     }
 }
