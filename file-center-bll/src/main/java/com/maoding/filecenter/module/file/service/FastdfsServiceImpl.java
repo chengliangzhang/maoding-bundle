@@ -238,22 +238,25 @@ public class FastdfsServiceImpl extends BaseService implements FastdfsService {
 
     @Override
     public void downLoadFile(String id, HttpServletResponse response) throws Exception {
+
+
         NetFileDO file = netFileDAO.selectByPrimaryKey(id);
         if(file!=null){
             String fileName = file.getFileName();
             if(file.getFileName().indexOf(".")<0){
                 fileName = fileName+"."+file.getFileExtName();
             }
-            byte[] bytes = storageClient.downloadFile(file.getFileGroup(), file.getFilePath(), new DownloadByteArray());
+
+            //建立传输通道
             response.setContentType("application/octet-stream");
             response.setHeader("Content-disposition", "attachment;filename="
                     + new String(fileName.getBytes("UTF-8"),"iso-8859-1"));
             OutputStream os = response.getOutputStream();
-            os.write(bytes);
-           // return ApiResult.success("下载成功",null);
-        }
 
-       // return ApiResult.failed("下载失败");
+            FileInfo info = storageClient.queryFileInfo(file.getFileGroup(),file.getFilePath());
+
+            storageClient.downloadFile(file.getFileGroup(),file.getFilePath(),new DownloadByteArray(os,info));
+        }
     }
 
     @Override
