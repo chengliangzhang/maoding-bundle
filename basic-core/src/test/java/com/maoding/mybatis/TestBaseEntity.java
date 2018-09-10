@@ -5,6 +5,7 @@ import com.maoding.core.base.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 深圳市卯丁技术有限公司
@@ -18,11 +19,11 @@ public class TestBaseEntity extends BaseEntity {
     @Column(name = "task_name")
     private String name;
 
-    @Column(name = "task_status")
-    private String status;
-
     @Column
     private String projectId;
+
+    @Transient
+    private String status;
 
     public String getName() {
         return name;

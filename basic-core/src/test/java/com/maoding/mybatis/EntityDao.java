@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * 描述:
  **/
 @Repository
-public interface EntityDao extends BaseViewDao<TestEntity> {
+public interface EntityDao extends BaseViewDao<TestBaseEntity> {
 }

@@ -53,25 +53,25 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * 日期       2018/9/7
      * @author   张成亮
      **/
-    default T updateById(@NotNull T request){
-        T entity = null;
+    default T updateById(@NotNull T entity){
+        T updatedEntity = null;
         //如果entity内的id不为空,则从数据库内读取，如果为空，则新增，如果不为空，则更改
-        if (StringUtils.isNotEmpty(request.getId())){
-            entity = selectById(request.getId());
-            if (entity != null) {
+        if (StringUtils.isNotEmpty(entity.getId())){
+            updatedEntity = selectById(entity.getId());
+            if (updatedEntity != null) {
                 //修改
-                BeanUtils.copyProperties(request, entity);
-                entity.resetUpdateDate();
-                updateByPrimaryKeySelective(entity);
+                BeanUtils.copyProperties(entity, updatedEntity);
+                updatedEntity.resetUpdateDate();
+                updateByPrimaryKeySelective(updatedEntity);
             }
         }
 
         //如果entity的id为空，或者数据库内没有此记录，则新增记录
-        if (entity == null) {
-            entity = request;
-            insert(entity);
+        if (updatedEntity == null) {
+            updatedEntity = entity;
+            insert(updatedEntity);
         }
-        return entity;
+        return updatedEntity;
     }
 
     /**
@@ -79,7 +79,7 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * 日期     2018/9/7
      * @author  张成亮
      **/
-    default  int insert(@NotNull T entity){
+    default int insert(@NotNull T entity){
         if (StringUtils.isEmpty(entity.getId())){
             entity.initEntity();
         } else if (entity.getCreateDate() == null) {
@@ -93,7 +93,50 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * 日期       2018/9/7
      * @author   张成亮
      **/
-    default int BatchInsert(List<T> recordList){
-        return insertList(recordList);
+    default int insert(@NotNull List<T> entityList){
+        entityList.forEach(this::insert);
+        return entityList.size();
+    }
+
+    @Deprecated
+    /** 使用insert代替 **/
+    default int BatchInsert(@NotNull List<T> recordList){
+        return insert(recordList);
+    }
+
+    /**
+     * 描述     删除一条记录
+     * 日期     2018/9/7
+     * @author  张成亮
+     **/
+    default void deleteById(@NotNull CoreEditDTO request){
+        if (StringUtils.isNotEmpty(request.getId())) {
+            Class<T> clazz = getT();
+            T entity = BeanUtils.createFrom(request, clazz);
+            deleteById(entity);
+        }
+    }
+
+    /**
+     * 描述       删除一条记录，需要判断记录是否被选中
+     * 日期       2018/9/10
+     * @author   张成亮
+     **/
+    default void delete(@NotNull CoreEditDTO request){
+        final String unselected = "0";
+        if (StringUtils.isNotSame(request.getIsSelected(), unselected)) {
+            deleteById(request);
+        }
+    }
+
+    /**
+     * 描述       根据记录信息删除一条记录
+     * 日期       2018/9/10
+     * @author   张成亮
+     **/
+    default void deleteById(@NotNull T entity){
+        if (StringUtils.isNotEmpty(entity.getId())) {
+            deleteByPrimaryKey(entity);
+        }
     }
 }
