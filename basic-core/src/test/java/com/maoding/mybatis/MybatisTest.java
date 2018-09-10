@@ -58,6 +58,16 @@ public class MybatisTest {
     }
 
     @Test
+    public void testBaseEdit() throws Exception{
+        TestBaseEntity entity;
+        entity = testBaseEditDao.update(getParentRequest("parent"));
+        assert (entity != null);
+        entity = testBaseEditDao.update(getChangeRequest(entity,"parent2","parent2"));
+        assert (entity != null);
+        testBaseEditDao.deleteById(getParentRequest("parent"));
+    }
+
+    @Test
     public void testGet() throws Exception {
         TestDTO dto;
         dto = testBaseViewDao.selectById("000114aac76b47e183e27477ac42cd6d");
