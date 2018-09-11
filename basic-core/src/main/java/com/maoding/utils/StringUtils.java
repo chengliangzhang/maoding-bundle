@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
@@ -32,6 +33,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static final String STAMP_FORMAT_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
     public static final String STAMP_FORMAT_DATE_TIME_MS = "yyyy-MM-dd HH:mm:ss.sss";
     public static final String DEFAULT_STAMP_FORMAT = STAMP_FORMAT_DATE;
+
+    /** 文件名相关字符串 **/
+    public static final String SPLIT_PATH = "/";
+    public static final String SPLIT_PATH_WINDOWS = "\\\\";
+    public static final String SPLIT_EXT = ".";
+    public static final String SPLIT_NAME_PART = "_";
+
+    /** 常量相关字符串 **/
+    public static final String SPLIT_ID = ",";
+    public static final String SPLIT_CONTENT = ";";
 
     /** json转换器 */
     private static ObjectMapper objectMapper = null;
@@ -362,4 +373,82 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static String format(String string,Object...objs){
         return format(new StringBuilder(string), objs).toString();
     }
+
+    /**
+     * 描述       标准化路径（所有路径分隔都用"/"）
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String formatPath(String path,Boolean rootAsNull) {
+        if (path == null) path = "";
+        path = path.replaceAll(SPLIT_PATH_WINDOWS, SPLIT_PATH).trim();
+        while (path.contains(SPLIT_PATH + SPLIT_PATH)) {
+            path = path.replaceAll(SPLIT_PATH + SPLIT_PATH, SPLIT_PATH);
+        }
+        if ((rootAsNull) && (isSame(path,SPLIT_PATH))){
+            path = null;
+        }
+        return path;
+    }
+    public static String formatPath(String path) {
+        return formatPath(path,false);
+    }
+
+    /**
+     * 描述       获取文件名
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String getFileName(String path){
+        if (path == null) return "";
+        path = formatPath(path);
+        return lastRight(path, SPLIT_PATH);
+    }
+
+    /**
+     * 描述       获取不带扩展名的文件名
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String getFileNameWithoutExt(String path){
+        String fileName = getFileName(path);
+        if (fileName == null) return "";
+        int pos = fileName.lastIndexOf(SPLIT_EXT);
+        return (pos < 0) ? fileName : fileName.substring(0,pos);
+    }
+
+    /**
+     * 描述       获取文件扩展名
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String getFileExt(String path){
+        String fileName = getFileName(path);
+        if (fileName == null) return "";
+        int pos = fileName.lastIndexOf(SPLIT_EXT);
+        return (pos < 0) ? "" : fileName.substring(pos);
+    }
+
+    /**
+     * 描述       获取路径名
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String getDirName(String path){
+        if (path == null) return "";
+        path = formatPath(path);
+        int pos = path.lastIndexOf(SPLIT_PATH);
+        if (pos < 0) return "";
+        return path.substring(0,pos);
+    }
+
+    /**
+     * 描述       附加路径
+     * 日期       2018/9/11
+     * @author   张成亮
+     **/
+    public static String appendPath(String parentPath,@NotNull String newPath){
+        return (isNotEmpty(parentPath)) ? formatPath(parentPath + SPLIT_PATH + newPath) : formatPath(newPath);
+    }
+
 }

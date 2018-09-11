@@ -130,6 +130,10 @@ public class TraceUtils {
         error(message,(Object[]) null);
     }
 
+    public static void error(String message, Exception e){
+        error(message + ":" + e.toString());
+    }
+
     /**
      * @author  张成亮
      * @date    2018/7/31

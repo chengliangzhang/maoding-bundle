@@ -3,12 +3,14 @@ package com.maoding.common.module.companyDisk.dao;
 
 import com.maoding.common.module.companyDisk.model.CompanyDiskDO;
 import com.maoding.core.base.BaseDao;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by Wuwq on 2017/05/26.
  */
+@Repository
 public interface CompanyDiskDAO extends BaseDao<CompanyDiskDO> {
 
     List<CompanyDiskDO> listAll();
