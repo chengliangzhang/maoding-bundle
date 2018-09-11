@@ -15,6 +15,8 @@ import java.util.List;
 public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper<T>,MySqlMapper<T> {
     //FIXME 特别注意，该接口不能被扫描到，否则会出错
 
+    String UNSELECTED = "0";
+
     /**
      * 描述       通过更新申请进行记录更新
      * 日期       2018/8/16
@@ -40,9 +42,8 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * @return   如果选中进行更新，返回更新后的记录，否则返回空
      **/
     default T update(@NotNull CoreEditDTO request){
-        final String unselected = "0";
         T entity = null;
-        if (StringUtils.isNotSame(request.getIsSelected(), unselected)) {
+        if (StringUtils.isNotSame(request.getIsSelected(), UNSELECTED)) {
             entity = updateById(request);
         }
         return entity;
@@ -123,8 +124,7 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * @author   张成亮
      **/
     default void delete(@NotNull CoreEditDTO request){
-        final String unselected = "0";
-        if (StringUtils.isNotSame(request.getIsSelected(), unselected)) {
+        if (StringUtils.isNotSame(request.getIsSelected(), UNSELECTED)) {
             deleteById(request);
         }
     }
@@ -135,8 +135,47 @@ public interface BaseEditDao<T extends BaseEntity> extends BaseViewDao<T>,Mapper
      * @author   张成亮
      **/
     default void deleteById(@NotNull T entity){
+        final String FIELD_NAME_STATUS = "status";
+        final String FILED_NAME_DELETED = "deleted";
+        final String STATUS_DELETED = "1";
+
         if (StringUtils.isNotEmpty(entity.getId())) {
+            if (BeanUtils.hasField(entity.getClass(),FILED_NAME_DELETED)) {
+                BeanUtils.setProperty(entity,FILED_NAME_DELETED,STATUS_DELETED);
+                entity.resetUpdateDate();
+                updateById(entity);
+            } else if (BeanUtils.hasField(entity.getClass(),FIELD_NAME_STATUS)) {
+                BeanUtils.setProperty(entity,FIELD_NAME_STATUS,STATUS_DELETED);
+                entity.resetUpdateDate();
+                updateById(entity);
+            } else {
+                deleteByPrimaryKey(entity);
+            }
+        }
+    }
+
+
+    /**
+     * 描述     通过更新申请删除一条记录
+     * 日期     2018/9/7
+     * @author  张成亮
+     **/
+    default void destroyById(@NotNull CoreEditDTO request){
+        if (StringUtils.isNotEmpty(request.getId())) {
+            Class<T> entityClass = getT();
+            T entity = BeanUtils.createFrom(request,entityClass);
             deleteByPrimaryKey(entity);
+        }
+    }
+
+    /**
+     * 描述       通过更新申请删除一条记录，需要判断记录是否被选中
+     * 日期       2018/9/10
+     * @author   张成亮
+     **/
+    default void destroy(@NotNull CoreEditDTO request){
+        if (StringUtils.isNotSame(request.getIsSelected(), UNSELECTED)) {
+            destroyById(request);
         }
     }
 }
