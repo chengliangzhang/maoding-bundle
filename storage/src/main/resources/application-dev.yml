@@ -19,7 +19,7 @@ spring:
 # Druid
 # ===================================================================
 druid:
-    url: jdbc:mysql://192.168.1.253:3306/maoding_new
+    url: jdbc:mysql://127.0.0.1:3306/maoding_test
 #    url: jdbc:mysql://rm-wz93ulb0g6s0y3bi4o.mysql.rds.aliyuncs.com:3306/maoding_pord_v2
     username: idccapp
     password: idccapp
@@ -52,22 +52,15 @@ druid:
 # ===================================================================
 mybatis:
     config-location: classpath:mybatis-config.xml
-#    mapper-locations: classpath*:mapper/**/*.xml
+    mapper-locations: classpath*:mapper/**/*.xml
 
 mapper:
     mappers:
-        - com.maoding.core.base.BaseDao
+        - com.maoding.core.base.BaseViewDao
+        - com.maoding.core.base.BaseEditDao
+        - com.maoding.core.base.CoreEditDao
     not-empty: false
     identity: MYSQL
-
-
-# ===================================================================
-# CORS
-# ===================================================================
-cors:
-   allowedOrgins:
-      - '*'
-
 
 # ===================================================================
 # FastDFS
