@@ -1,8 +1,8 @@
 package com.maoding.yongyoucloud.module.enterprise.dto;
 
-import com.maoding.core.base.BaseQueryDTO;
+import com.maoding.core.base.CoreQueryDTO;
 
-public class EnterpriseSearchQueryDTO extends BaseQueryDTO {
+public class EnterpriseSearchQueryDTO extends CoreQueryDTO {
 
     private String enterpriseId;
 

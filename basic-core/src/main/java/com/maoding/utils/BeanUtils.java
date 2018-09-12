@@ -873,7 +873,7 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
         MethodAccess objMethodAccess = methodMap.get(obj.getClass());
         if (objMethodAccess == null) objMethodAccess = cache(obj.getClass());
 
-        String getKey = obj.getClass().getName() + DOT + GET + ptyName;
+        String getKey = obj.getClass().getName() + DOT + GET + StringUtils.capitalize(ptyName);
         Integer getIndex = methodIndexMap.get(getKey);
         if ((objMethodAccess == null) || (getIndex == null)){
             return null;
@@ -886,32 +886,40 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
         }
     }
 
-
-    /**
-     * 读取Bean属性
-     */
-    public static Object getProperty(final Object obj, final String ptyName) {
-        if ((obj == null) || (ptyName == null)) return null;
-
-        try {
-            BeanInfo info = Introspector.getBeanInfo(obj.getClass(), Object.class);
-            PropertyDescriptor[] properties = info.getPropertyDescriptors();
-
-            for (PropertyDescriptor pty : properties) {
-                if (pty.getName().equals(ptyName)){
-                    return pty.getReadMethod().invoke(obj);
-                }
-            }
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public static <T,K> K getProperty(T obj,String ptyName,Class<? extends K> ptyClass){
+        return getProperty(obj,ptyName,ptyClass,false);
     }
 
+    public static <T> Object getProperty(T obj, String ptyName) {
+        return getProperty(obj,ptyName,Object.class);
+    }
+
+    /**
+     * 描述     设置输入对象内的属性
+     * 日期     2018/7/31
+     * @author  张成亮
+     **/
+    public static <T,K> void setProperty(T obj,String ptyName,K ptyValue){
+        if ((obj != null) && (!ObjectUtils.isBasicType(obj.getClass())) && (StringUtils.isNotEmpty(ptyName))){
+            Class<?> objClass = obj.getClass();
+            MethodAccess objMethodAccess = methodMap.get(obj.getClass());
+            if (objMethodAccess == null) {
+                objMethodAccess = cache(objClass);
+            }
+
+            if (objMethodAccess != null){
+                String setKey = objClass.getName() + DOT + SET + StringUtils.capitalize(ptyName);
+                Integer setIndex = methodIndexMap.get(setKey);
+                if (setIndex != null){
+                    Class[][] paramTypes = objMethodAccess.getParameterTypes();
+                    Class<?> paramType = paramTypes[setIndex][0];
+                    if (paramType != null) {
+                        objMethodAccess.invoke(obj, setIndex, createFrom(ptyValue,paramType));
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * 根据entityList复制dtoList
@@ -928,5 +936,49 @@ public final class BeanUtils extends org.springframework.beans.BeanUtils{
 
     public static <T> String getId(T obj){
         return getProperty(obj,DEFAULT_KEY_NAME,String.class,false);
+    }
+
+    /**
+     * 描述       查看是否有指定属性
+     * 日期       2018/9/10
+     * @author   张成亮
+     **/
+    public static boolean hasField(Class<?> objClass,String ptyName,Class<?> fieldClass){
+        boolean error = false;
+
+        if ((objClass == null) || (ObjectUtils.isBasicType(objClass)) || (StringUtils.isEmpty(ptyName))){
+            error = true;
+        }
+
+        MethodAccess objMethodAccess = null;
+        if (!error) {
+            objMethodAccess = methodMap.get(objClass);
+            if (objMethodAccess == null) {
+                objMethodAccess = cache(objClass);
+            }
+            if (objMethodAccess == null){
+                error = true;
+            }
+        }
+
+        if (!error) {
+            String getKey = objClass.getName() + DOT + GET + StringUtils.capitalize(ptyName);
+            Integer getIndex = methodIndexMap.get(getKey);
+            if (getIndex == null){
+                error = true;
+            } else if (fieldClass != null){
+                Class[] returnTypes = objMethodAccess.getReturnTypes();
+                Class<?> returnType = returnTypes[getIndex];
+                if ((returnType == null) || !(returnType.isAssignableFrom(fieldClass))){
+                    error = true;
+                }
+            }
+        }
+
+        return !error;
+    }
+
+    public static boolean hasField(Class<?> objClass,String ptyName){
+        return hasField(objClass,ptyName,null);
     }
 }

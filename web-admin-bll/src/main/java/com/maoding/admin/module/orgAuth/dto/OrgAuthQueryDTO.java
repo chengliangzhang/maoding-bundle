@@ -1,7 +1,7 @@
 package com.maoding.admin.module.orgAuth.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.maoding.core.base.BaseQueryDTO;
+import com.maoding.core.base.CoreQueryDTO;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Chengliang.zhang on 2017/7/12.
  */
-public class OrgAuthQueryDTO extends BaseQueryDTO {
+public class OrgAuthQueryDTO extends CoreQueryDTO {
     /**
      * 要显示的认证状态(0.否，1.申请认证，2.通过认证，3.未通过认证)
      */

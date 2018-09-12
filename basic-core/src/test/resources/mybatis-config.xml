@@ -28,7 +28,7 @@
         <!-- 	指定 Mybatis 创建具有延迟加载能力的对象所用到的代理工具。CGLIB | JAVASSIST 。默认：JAVASSIST (MyBatis 3.3 or above) -->
         <setting name="proxyFactory" value="JAVASSIST"/>
         <!-- 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。默认：空 -->
-        <setting name="logImpl" value="LOG4J"/>
+        <setting name="logImpl" value="SLF4J"/>
         <!-- 允许使用方法签名中的名称作为语句参数名称。 为了使用该特性，你的工程必须采用Java 8编译，并且加上-parameters选项。（从3.4.1开始）默认：true-->
         <setting name="useActualParamName" value="false"/>
     </settings>

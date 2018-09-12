@@ -37,7 +37,7 @@ public class DownloadByteArray implements DownloadCallback<byte[]> {
         if (getOs() != null){
             final int maxBlockSize = 4096;
 
-            long fileSize = (info != null) ? info.getFileSize() : maxBlockSize;
+            long fileSize = (getInfo() != null) ? getInfo().getFileSize() : maxBlockSize;
             if (fileSize > maxBlockSize){
                 for (long pos=0; pos<fileSize; pos+=maxBlockSize){
                     long size = (fileSize - pos);

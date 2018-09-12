@@ -1,6 +1,7 @@
 package com.maoding.admin.module.orgAuth.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.maoding.core.base.BaseIdObject;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -8,11 +9,8 @@ import java.time.LocalDate;
 /**
  * Created by Wuwq on 2017/05/31.
  */
-public class OrgAuthDTO {
-    /**
-     * 组织ID applyAuthentication*
-     */
-    String id;
+public class OrgAuthDTO extends BaseIdObject {
+    /** id: 组织ID applyAuthentication **/
 
     /**
      * 卯丁内组织名称
@@ -116,14 +114,6 @@ public class OrgAuthDTO {
 
     public void setRejectType(Integer rejectType) {
         this.rejectType = rejectType;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getOrgAlias() {

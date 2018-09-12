@@ -14,32 +14,43 @@
 
     <dependencies>
         <!-- 日志 -->
-        <dependency><!-- logback -->
+        <dependency>
+            <!-- 用于打印SQL语句 -->
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>${janino.version}</version>
+        </dependency>
+        <dependency>
+            <!-- 用于配置日志 -->
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- log4jdbc -->
+        <dependency>
             <groupId>com.googlecode.log4jdbc</groupId>
             <artifactId>log4jdbc</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- slf4j -->
+        <dependency>
+            <!-- 通用日志 -->
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- 代码调用log4j会被桥接到slf4j -->
+        <dependency>
+            <!-- 在调用log4j时桥接到slf4j -->
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- 代码调用commons-logging会被桥接到slf4j -->
+        <dependency>
+            <!-- 在调用commons-logging时桥接到slf4j -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency><!-- 代码调用java.util.logging会被桥接到slf4j -->
+        <dependency>
+            <!-- 在调用java.util.logging时桥接到slf4j -->
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <scope>provided</scope>
@@ -58,32 +69,32 @@
         </dependency>
 
         <!-- database -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- 通用Mapper -->
-        <dependency>
-            <groupId>tk.mybatis</groupId>
-            <artifactId>mapper</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.alibaba</groupId>-->
+            <!--<artifactId>druid</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>mysql</groupId>-->
+            <!--<artifactId>mysql-connector-java</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.mybatis</groupId>-->
+            <!--<artifactId>mybatis-spring</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.mybatis</groupId>-->
+            <!--<artifactId>mybatis</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+        <!--&lt;!&ndash; 通用Mapper &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>tk.mybatis</groupId>-->
+            <!--<artifactId>mapper</artifactId>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
 
         <!-- servlet -->
         <dependency>

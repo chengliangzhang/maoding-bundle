@@ -1,6 +1,5 @@
 package com.maoding.yongyoucloud.module.enterprise.controller;
 
-import com.maoding.core.bean.ApiRequest;
 import com.maoding.core.bean.ApiResult;
 import com.maoding.utils.StringUtils;
 import com.maoding.yongyoucloud.module.enterprise.dto.EnterpriseSearchQueryDTO;

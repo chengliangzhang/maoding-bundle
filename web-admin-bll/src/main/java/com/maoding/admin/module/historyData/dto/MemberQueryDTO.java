@@ -1,11 +1,11 @@
 package com.maoding.admin.module.historyData.dto;
 
-import com.maoding.core.base.BaseQueryDTO;
+import com.maoding.core.base.CoreQueryDTO;
 
 /**
  * Created by Chengliang.zhang on 2017/7/20.
  */
-public class MemberQueryDTO extends BaseQueryDTO {
+public class MemberQueryDTO extends CoreQueryDTO {
     /** 人员所在公司id */
     String companyId;
     /** 人员所在项目id */

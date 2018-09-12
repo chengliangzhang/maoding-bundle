@@ -29,10 +29,11 @@ import java.util.Map;
 public class UtilsTest {
     @Test
     public void testPostData() throws Exception {
+        final String hostUrl = "http://192.168.1.74/maoding";
         Object result;
-        result = OkHttpUtils.postData("http://localhost:8080/iWork/sys/login",getLogin());
+        result = OkHttpUtils.postData(hostUrl + "/iWork/sys/login",getLogin());
         assert (result != null);
-        OkHttpUtils.postDataAsync("http://localhost:8080/iWork/sys/login",getLogin(),null);
+        OkHttpUtils.postDataAsync(hostUrl + "/iWork/sys/login",getLogin(),null);
     }
 
     @Test

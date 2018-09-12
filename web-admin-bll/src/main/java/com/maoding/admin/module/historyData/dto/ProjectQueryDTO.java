@@ -1,13 +1,13 @@
 package com.maoding.admin.module.historyData.dto;
 
-import com.maoding.core.base.BaseQueryDTO;
+import com.maoding.core.base.CoreQueryDTO;
 
 import java.time.LocalDateTime;
 
 /**
  * Created by Chengliang.zhang on 2017/7/20.
  */
-public class ProjectQueryDTO extends BaseQueryDTO{
+public class ProjectQueryDTO extends CoreQueryDTO {
     /** 立项组织 */
     String companyId;
     /** 项目编号 */

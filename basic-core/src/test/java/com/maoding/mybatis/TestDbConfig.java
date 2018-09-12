@@ -1,17 +1,27 @@
-package com.maoding.notify.config;
+package com.maoding.mybatis;
 
 import com.maoding.config.DruidConfig;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
- * Created by Wuwq on 2016/12/13.
- */
+ * 深圳市卯丁技术有限公司
+ * 日期: 2018/9/11
+ * 类名: com.maoding.mybatis.TestDbConfig
+ * 作者: 张成亮
+ * 描述: 
+ **/
+@Component
+@ComponentScan
 @Configuration
+@EnableAutoConfiguration
 @ConfigurationProperties(prefix = "druid")
-@MapperScan(basePackages = {"com.maoding.notify.module.*.dao"}, sqlSessionFactoryRef = "sqlSessionFactory")
-public class DbConfig extends DruidConfig {
+@MapperScan(basePackages = "com.maoding.mybatis", sqlSessionFactoryRef = "sqlSessionFactory")
+public class TestDbConfig extends DruidConfig {
     private String url;
     private String username;
     private String password;
@@ -33,6 +43,15 @@ public class DbConfig extends DruidConfig {
     private int maxPoolPreparedStatementPerConnectionSize;
     private String filters;
     private String connectionProperties;
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getUrl() {
         return url;
@@ -201,4 +220,5 @@ public class DbConfig extends DruidConfig {
     public void setConnectionProperties(String connectionProperties) {
         this.connectionProperties = connectionProperties;
     }
+
 }
