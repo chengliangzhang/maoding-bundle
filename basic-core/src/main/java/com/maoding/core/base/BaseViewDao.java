@@ -45,6 +45,7 @@ public interface BaseViewDao<T extends BaseIdObject> extends BaseSelectMapper<T>
             RowBounds rowBounds = new RowBounds(DigitUtils.parseInt(query.getPageIndex()),DigitUtils.parseInt(query.getPageSize()));
             list = selectByExampleAndRowBounds(example,rowBounds);
         } else {
+            list = selectByExample(example);
         }
         return list;
     }

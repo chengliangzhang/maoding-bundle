@@ -5,7 +5,7 @@
 # ===================================================================
 server:
    port: 8071
-   context-path:
+   context-path: /storage
 spring:
    jmx:
      enabled: false
@@ -107,3 +107,10 @@ aliyunsts:
   roleArn: acs:ram::1024029689061125:role/aliyunosstokengeneratorrole
   roleSessionName: external-username
   tokenExpireTime: 3600
+
+# ===================================================================
+# 启动参数
+# ===================================================================
+startup:
+  schedulePoolSize: 1
+  isAutoClear: 0
