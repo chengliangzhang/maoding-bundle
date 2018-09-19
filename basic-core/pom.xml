@@ -36,17 +36,18 @@
         </dependency>
 
         <!-- 日志 -->
+        <!-- 用于打印SQL语句 -->
         <dependency>
-            <!-- 用于打印SQL语句 -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <version>${janino.version}</version>
         </dependency>
+
+        <!-- 用于配置日志 -->
         <dependency>
-            <!-- 用于配置日志 -->
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <scope>provided</scope>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.log4jdbc</groupId>

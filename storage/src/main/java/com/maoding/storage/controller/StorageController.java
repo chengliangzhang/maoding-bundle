@@ -3,6 +3,7 @@ package com.maoding.storage.controller;
 import com.maoding.core.base.BaseController;
 import com.maoding.core.bean.ApiResult;
 import com.maoding.storage.dto.FdNodeDTO;
+import com.maoding.storage.dto.FdNodeEditDTO;
 import com.maoding.storage.dto.FdNodeQueryDTO;
 import com.maoding.storage.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class StorageController extends BaseController {
     private StorageService storageService;
 
     /**
-     * 描述       查询文件列表
+     * 描述       查询文件及目录列表
      * 日期       2018/9/12
      * @author   张成亮
      **/
@@ -38,5 +39,17 @@ public class StorageController extends BaseController {
         List<FdNodeDTO> list = storageService.listFdNode(query);
         return ApiResult.success(list);
     }
+
+    /**
+     * 描述       创建文件
+     * 日期       2018/9/19
+     * @author   张成亮
+     **/
+    @RequestMapping(value = "/createFile", method = RequestMethod.POST)
+    @ResponseBody
+    public ApiResult createFile(@RequestBody FdNodeEditDTO request) {
+        return null;
+    }
+
 
 }

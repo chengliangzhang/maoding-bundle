@@ -1,6 +1,6 @@
 package com.maoding.storage.dto;
 
-import com.maoding.core.base.CoreQueryDTO;
+import com.maoding.core.base.CoreEditDTO;
 
 /**
  * 深圳市卯丁技术有限公司
@@ -9,7 +9,7 @@ import com.maoding.core.base.CoreQueryDTO;
  * 作者: 张成亮
  * 描述:
  **/
-public class FdNodeQueryDTO extends CoreQueryDTO {
+public class FdNodeQueryDTO extends CoreEditDTO {
     /** id:文件节点编号 **/
 
     /** 父节点编号 **/
