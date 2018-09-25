@@ -1,6 +1,8 @@
 package com.maoding.fastdfsClient.proto.storage;
 
 import com.maoding.fastdfsClient.domain.FileInfo;
+import com.maoding.fastdfsClient.exception.FdfsServerException;
+import com.maoding.fastdfsClient.proto.ErrorCodeConstants;
 import com.maoding.utils.TraceUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -57,8 +59,8 @@ public class DownloadByteArray implements DownloadCallback<byte[]> {
                 return IOUtils.toByteArray(ins);
             }
         } catch (IOException e){
-            TraceUtils.error("获取文件内容出错");
-            return null;
+            TraceUtils.error("服务端发生io异常");
+            throw FdfsServerException.byCode(ErrorCodeConstants.ERR_NO_EIO);
         }
     }
 
