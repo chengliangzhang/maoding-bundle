@@ -84,7 +84,7 @@ public class FdfsParamMapper {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private static <T> T mapByIndex(byte[] content, Class<T> genericType, ObjectMateData objectMap, Charset charset)
+    public static <T> T mapByIndex(byte[] content, Class<T> genericType, ObjectMateData objectMap, Charset charset)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
 
         List<FieldMateData> mappingFields = objectMap.getFieldList();
@@ -134,7 +134,7 @@ public class FdfsParamMapper {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    private static byte[] convertFieldToByte(ObjectMateData objectMap, Object object, Charset charset)
+    public static byte[] convertFieldToByte(ObjectMateData objectMap, Object object, Charset charset)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         List<FieldMateData> mappingFields = objectMap.getFieldList();
         // 获取报文长度 (固定长度+动态长度)
