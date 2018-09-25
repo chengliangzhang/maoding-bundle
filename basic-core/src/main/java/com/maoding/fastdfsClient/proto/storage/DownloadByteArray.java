@@ -1,6 +1,7 @@
 package com.maoding.fastdfsClient.proto.storage;
 
 import com.maoding.fastdfsClient.domain.FileInfo;
+import com.maoding.utils.TraceUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -34,25 +35,30 @@ public class DownloadByteArray implements DownloadCallback<byte[]> {
 
     @Override
     public byte[] recv(InputStream ins) throws IOException {
-        if (getOs() != null){
-            final int maxBlockSize = 4096;
+        try {
+            if (getOs() != null) {
+                final int maxBlockSize = 4096;
 
-            long fileSize = (getInfo() != null) ? getInfo().getFileSize() : maxBlockSize;
-            if (fileSize > maxBlockSize){
-                for (long pos=0; pos<fileSize; pos+=maxBlockSize){
-                    long size = (fileSize - pos);
-                    if (size > maxBlockSize){
-                        size = maxBlockSize;
+                long fileSize = (getInfo() != null) ? getInfo().getFileSize() : maxBlockSize;
+                if (fileSize > maxBlockSize) {
+                    for (long pos = 0; pos < fileSize; pos += maxBlockSize) {
+                        long size = (fileSize - pos);
+                        if (size > maxBlockSize) {
+                            size = maxBlockSize;
+                        }
+                        IOUtils.copy(ins, getOs(), (int) size);
                     }
-                    IOUtils.copy(ins,getOs(),(int)size);
+                } else {
+                    IOUtils.copy(ins, getOs());
                 }
-            } else {
-                IOUtils.copy(ins,getOs());
-            }
 
+                return null;
+            } else {
+                return IOUtils.toByteArray(ins);
+            }
+        } catch (IOException e){
+            TraceUtils.error("获取文件内容出错");
             return null;
-        } else {
-            return IOUtils.toByteArray(ins);
         }
     }
 
